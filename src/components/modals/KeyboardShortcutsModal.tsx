@@ -77,14 +77,14 @@ const shortcutGroups: ShortcutGroup[] = [
 ];
 
 interface KeyboardShortcutsModalProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
 /**
  * Modal showing all keyboard shortcuts
  */
-export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcutsModalProps) {
+export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsModalProps) {
     const [filter, setFilter] = useState('');
 
     const filteredGroups = useMemo(() => {
@@ -102,7 +102,7 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
     }, [filter]);
 
     return (
-        <Modal open={open} onOpenChange={onOpenChange} title="Keyboard Shortcuts" className="max-w-2xl max-h-[80vh]">
+        <Modal isOpen={isOpen} onClose={onClose} title="Keyboard Shortcuts" size="lg">
             {/* Search */}
             <div className="mb-4">
                 <input

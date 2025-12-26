@@ -3,27 +3,38 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import type React from 'react';
 
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
+
+const sizeClasses: Record<ModalSize, string> = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl'
+};
+
 interface ModalProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+    isOpen: boolean;
+    onClose: () => void;
     title?: string;
     description?: string;
     children: React.ReactNode;
+    size?: ModalSize;
     className?: string;
 }
 
 /**
  * Modal dialog component using Radix UI
  */
-export function Modal({ open, onOpenChange, title, description, children, className }: ModalProps) {
+export function Modal({ isOpen, onClose, title, description, children, size = 'md', className }: ModalProps) {
     return (
-        <Dialog.Root open={open} onOpenChange={onOpenChange}>
+        <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200" />
                 <Dialog.Content
                     className={cn(
                         'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-                        'w-full max-w-lg max-h-[85vh] overflow-auto',
+                        'w-full max-h-[85vh] overflow-auto',
+                        sizeClasses[size],
                         'bg-bg-primary rounded-lg shadow-xl',
                         'border border-border',
                         'animate-in fade-in zoom-in-95 duration-200',

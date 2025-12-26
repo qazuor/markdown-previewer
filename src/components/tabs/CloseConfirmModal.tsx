@@ -12,8 +12,8 @@ interface CloseConfirmModalProps {
 export function CloseConfirmModal({ isOpen, fileName, onAction }: CloseConfirmModalProps) {
     return (
         <Modal
-            open={isOpen}
-            onOpenChange={(open) => !open && onAction('cancel')}
+            isOpen={isOpen}
+            onClose={() => onAction('cancel')}
             title="Unsaved changes"
             description={`Do you want to save the changes you made to "${fileName}"?`}
         >
