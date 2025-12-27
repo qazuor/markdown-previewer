@@ -1,5 +1,6 @@
 import { cn } from '@/utils/cn';
 import type { EditorView } from '@codemirror/view';
+import { ExportMenu } from './ExportMenu';
 import { FormatButtonGroup, ToolbarSeparator } from './FormatButton';
 import {
     BoldButton,
@@ -84,6 +85,12 @@ export function Toolbar({ editorView, className }: ToolbarProps) {
                 <NumberedListButton onList={handleList} />
                 <TaskListButton onList={handleList} />
             </FormatButtonGroup>
+
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Export menu */}
+            <ExportMenu />
         </div>
     );
 }
