@@ -9,6 +9,7 @@ import {
     ContextMenuSubTrigger,
     ContextMenuTrigger
 } from '@/components/ui';
+import { useSettingsStore } from '@/stores/settingsStore';
 import type { EditorView } from '@codemirror/view';
 import {
     Bold,
@@ -25,11 +26,14 @@ import {
     ListOrdered,
     ListTodo,
     Minus,
+    Plus,
     Quote,
+    RotateCcw,
     Scissors,
     SquareCheck,
     Strikethrough,
-    Table
+    Table,
+    ZoomIn
 } from 'lucide-react';
 import type React from 'react';
 import { useCallback } from 'react';
@@ -62,6 +66,10 @@ interface EditorContextMenuProps {
  */
 export function EditorContextMenu({ children, editorView }: EditorContextMenuProps) {
     const { t } = useTranslation();
+    const zoomEditorIn = useSettingsStore((s) => s.zoomEditorIn);
+    const zoomEditorOut = useSettingsStore((s) => s.zoomEditorOut);
+    const resetEditorZoom = useSettingsStore((s) => s.resetEditorZoom);
+    const editorFontSize = useSettingsStore((s) => s.editorFontSize);
 
     const executeCommand = useCallback(
         (command: (view: EditorView) => boolean) => {
@@ -273,6 +281,37 @@ export function EditorContextMenu({ children, editorView }: EditorContextMenuPro
                         <ContextMenuItem onClick={() => insertTable(editorView)}>
                             <Table className="mr-2 h-4 w-4" />
                             {t('contextMenu.table')}
+                        </ContextMenuItem>
+                    </ContextMenuSubContent>
+                </ContextMenuSub>
+
+                <ContextMenuSeparator />
+
+                {/* Zoom submenu */}
+                <ContextMenuSub>
+                    <ContextMenuSubTrigger>
+                        <ZoomIn className="mr-2 h-4 w-4" />
+                        {t('zoom.zoom')} ({editorFontSize}px)
+                    </ContextMenuSubTrigger>
+                    <ContextMenuSubContent className="w-48">
+                        <ContextMenuItem onClick={zoomEditorIn}>
+                            <Plus className="mr-2 h-4 w-4" />
+                            {t('zoom.zoomIn')}
+                            <ContextMenuShortcut>Ctrl++</ContextMenuShortcut>
+                        </ContextMenuItem>
+
+                        <ContextMenuItem onClick={zoomEditorOut}>
+                            <Minus className="mr-2 h-4 w-4" />
+                            {t('zoom.zoomOut')}
+                            <ContextMenuShortcut>Ctrl+-</ContextMenuShortcut>
+                        </ContextMenuItem>
+
+                        <ContextMenuSeparator />
+
+                        <ContextMenuItem onClick={resetEditorZoom}>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            {t('zoom.resetZoom')}
+                            <ContextMenuShortcut>Ctrl+0</ContextMenuShortcut>
                         </ContextMenuItem>
                     </ContextMenuSubContent>
                 </ContextMenuSub>
