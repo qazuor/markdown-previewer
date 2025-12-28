@@ -1,25 +1,83 @@
 import rehypeShiki from '@shikijs/rehype';
+import rehypeKatex from 'rehype-katex';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 
 export type SyntaxTheme = 'light' | 'dark';
 
-// Extended sanitization schema for Shiki output
+// Extended sanitization schema for Shiki output and KaTeX
 const sanitizeSchema = {
     ...defaultSchema,
     attributes: {
         ...defaultSchema.attributes,
         code: [...(defaultSchema.attributes?.code ?? []), 'className', 'style'],
-        span: [...(defaultSchema.attributes?.span ?? []), 'className', 'style'],
+        span: [...(defaultSchema.attributes?.span ?? []), 'className', 'style', 'aria-hidden'],
         pre: [...(defaultSchema.attributes?.pre ?? []), 'className', 'style', 'tabindex'],
-        div: [...(defaultSchema.attributes?.div ?? []), 'className', 'data-line', 'data-language']
+        div: [...(defaultSchema.attributes?.div ?? []), 'className', 'data-line', 'data-language'],
+        // KaTeX elements
+        math: ['xmlns', 'display'],
+        semantics: [],
+        annotation: ['encoding'],
+        mrow: [],
+        mi: [],
+        mo: ['fence', 'stretchy', 'symmetric', 'lspace', 'rspace', 'minsize', 'maxsize', 'separator', 'largeop', 'movablelimits', 'accent'],
+        mn: [],
+        msup: [],
+        msub: [],
+        msubsup: [],
+        mfrac: ['linethickness'],
+        msqrt: [],
+        mroot: [],
+        munder: [],
+        mover: [],
+        munderover: [],
+        mtable: ['columnalign', 'rowspacing', 'columnspacing'],
+        mtr: [],
+        mtd: [],
+        mtext: [],
+        mspace: ['width', 'height', 'depth'],
+        menclose: ['notation'],
+        mstyle: ['displaystyle', 'scriptlevel'],
+        mpadded: ['width', 'height', 'depth', 'lspace', 'voffset']
     },
-    tagNames: [...(defaultSchema.tagNames ?? []), 'section', 'aside', 'details', 'summary']
+    tagNames: [
+        ...(defaultSchema.tagNames ?? []),
+        'section',
+        'aside',
+        'details',
+        'summary',
+        // KaTeX elements
+        'math',
+        'semantics',
+        'annotation',
+        'mrow',
+        'mi',
+        'mo',
+        'mn',
+        'msup',
+        'msub',
+        'msubsup',
+        'mfrac',
+        'msqrt',
+        'mroot',
+        'munder',
+        'mover',
+        'munderover',
+        'mtable',
+        'mtr',
+        'mtd',
+        'mtext',
+        'mspace',
+        'menclose',
+        'mstyle',
+        'mpadded'
+    ]
 };
 
 /**
@@ -32,7 +90,13 @@ export async function createRendererProcessor(theme: SyntaxTheme = 'light') {
         .use(remarkParse)
         .use(remarkFrontmatter, ['yaml', 'toml'])
         .use(remarkGfm)
+        .use(remarkMath)
         .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeKatex, {
+            throwOnError: false,
+            errorColor: '#cc0000',
+            strict: false
+        })
         .use(rehypeShiki, {
             theme: shikiTheme,
             fallbackLanguage: 'text'
