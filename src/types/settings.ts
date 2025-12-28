@@ -4,6 +4,13 @@ export type PreviewStyle = 'github' | 'gitlab' | 'notion' | 'obsidian' | 'stacko
 
 export type Language = 'en' | 'es';
 
+// Zoom constants
+export const MIN_FONT_SIZE = 8;
+export const MAX_FONT_SIZE = 32;
+export const ZOOM_STEP = 2;
+export const DEFAULT_EDITOR_FONT_SIZE = 14;
+export const DEFAULT_PREVIEW_FONT_SIZE = 16;
+
 export interface Settings {
     // Appearance
     theme: Theme;
@@ -31,8 +38,8 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
     theme: 'light',
     previewStyle: 'github',
-    editorFontSize: 10,
-    previewFontSize: 13,
+    editorFontSize: DEFAULT_EDITOR_FONT_SIZE,
+    previewFontSize: DEFAULT_PREVIEW_FONT_SIZE,
     fontFamily: 'Fira Code',
     wordWrap: true,
     lineNumbers: true,
