@@ -147,11 +147,26 @@ export function useToolbarActions({ editorView }: UseToolbarActionsOptions) {
         [editorView, executeCommand]
     );
 
+    const handleEmojiInsert = useCallback(
+        (emoji: string) => {
+            if (!editorView) return;
+
+            const { from, to } = editorView.state.selection.main;
+            editorView.dispatch({
+                changes: { from, to, insert: emoji },
+                selection: { anchor: from + emoji.length }
+            });
+            editorView.focus();
+        },
+        [editorView]
+    );
+
     return {
         handleFormat,
         handleHeading,
         handleInsert,
         handleList,
+        handleEmojiInsert,
         isDisabled: !editorView
     };
 }
