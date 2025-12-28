@@ -29,14 +29,14 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-    theme: 'system',
+    theme: 'light',
     previewStyle: 'github',
-    editorFontSize: 14,
-    previewFontSize: 16,
-    fontFamily: 'JetBrains Mono',
+    editorFontSize: 10,
+    previewFontSize: 13,
+    fontFamily: 'Fira Code',
     wordWrap: true,
     lineNumbers: true,
-    minimap: false,
+    minimap: true,
     syncScroll: true,
     autoSave: true,
     autoSaveInterval: 2000,
