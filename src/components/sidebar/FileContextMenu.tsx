@@ -1,8 +1,18 @@
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuSeparator,
+    ContextMenuShortcut,
+    ContextMenuSub,
+    ContextMenuSubContent,
+    ContextMenuSubTrigger,
+    ContextMenuTrigger
+} from '@/components/ui';
 import { useDocumentStore } from '@/stores/documentStore';
-import { cn } from '@/utils/cn';
-import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
-import { Copy, Download, Pencil, Trash2 } from 'lucide-react';
+import { Copy, Download, FileCode, FileImage, FileText, Pencil, Trash2 } from 'lucide-react';
 import type React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FileContextMenuProps {
     documentId: string;
@@ -10,16 +20,17 @@ interface FileContextMenuProps {
 }
 
 /**
- * Context menu for file operations
+ * Context menu for file operations in the sidebar
  */
 export function FileContextMenu({ documentId, children }: FileContextMenuProps) {
+    const { t } = useTranslation();
     const { getDocument, deleteDocument, renameDocument, createDocument, documents } = useDocumentStore();
 
     const handleRename = () => {
         const doc = getDocument(documentId);
         if (!doc) return;
 
-        const newName = prompt('Enter new name:', doc.name);
+        const newName = prompt(t('contextMenu.enterNewName'), doc.name);
         if (newName?.trim()) {
             renameDocument(documentId, newName.trim(), true);
         }
@@ -37,15 +48,37 @@ export function FileContextMenu({ documentId, children }: FileContextMenuProps) 
         }
     };
 
-    const handleDownload = () => {
+    const handleDownload = (format: 'md' | 'html' | 'txt' = 'md') => {
         const doc = getDocument(documentId);
         if (!doc) return;
 
-        const blob = new Blob([doc.content], { type: 'text/markdown' });
+        let content = doc.content;
+        let mimeType = 'text/markdown';
+        let extension = 'md';
+
+        if (format === 'html') {
+            content = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>${doc.name}</title>
+</head>
+<body>
+<pre>${doc.content}</pre>
+</body>
+</html>`;
+            mimeType = 'text/html';
+            extension = 'html';
+        } else if (format === 'txt') {
+            mimeType = 'text/plain';
+            extension = 'txt';
+        }
+
+        const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${doc.name}.md`;
+        a.download = `${doc.name}.${extension}`;
         a.click();
         URL.revokeObjectURL(url);
     };
@@ -54,79 +87,57 @@ export function FileContextMenu({ documentId, children }: FileContextMenuProps) 
         const doc = getDocument(documentId);
         if (!doc) return;
 
-        const confirmed = confirm(`Are you sure you want to delete "${doc.name}"?`);
+        const confirmed = confirm(t('confirm.deleteFile'));
         if (confirmed) {
             deleteDocument(documentId);
         }
     };
 
     return (
-        <ContextMenuPrimitive.Root>
-            <ContextMenuPrimitive.Trigger asChild>{children}</ContextMenuPrimitive.Trigger>
-            <ContextMenuPrimitive.Portal>
-                <ContextMenuPrimitive.Content
-                    className={cn(
-                        'z-50 min-w-[160px] overflow-hidden rounded-md',
-                        'bg-bg-primary border border-border shadow-lg',
-                        'animate-in fade-in-0 zoom-in-95',
-                        'p-1'
-                    )}
-                >
-                    <ContextMenuPrimitive.Item
-                        onClick={handleRename}
-                        className={cn(
-                            'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5',
-                            'text-sm text-text-primary outline-none',
-                            'focus:bg-bg-tertiary',
-                            'transition-colors'
-                        )}
-                    >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Rename
-                    </ContextMenuPrimitive.Item>
+        <ContextMenu>
+            <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem onClick={handleRename}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    {t('common.rename')}
+                    <ContextMenuShortcut>F2</ContextMenuShortcut>
+                </ContextMenuItem>
 
-                    <ContextMenuPrimitive.Item
-                        onClick={handleDuplicate}
-                        className={cn(
-                            'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5',
-                            'text-sm text-text-primary outline-none',
-                            'focus:bg-bg-tertiary',
-                            'transition-colors'
-                        )}
-                    >
-                        <Copy className="mr-2 h-4 w-4" />
-                        Duplicate
-                    </ContextMenuPrimitive.Item>
+                <ContextMenuItem onClick={handleDuplicate}>
+                    <Copy className="mr-2 h-4 w-4" />
+                    {t('common.duplicate')}
+                </ContextMenuItem>
 
-                    <ContextMenuPrimitive.Item
-                        onClick={handleDownload}
-                        className={cn(
-                            'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5',
-                            'text-sm text-text-primary outline-none',
-                            'focus:bg-bg-tertiary',
-                            'transition-colors'
-                        )}
-                    >
+                <ContextMenuSeparator />
+
+                <ContextMenuSub>
+                    <ContextMenuSubTrigger>
                         <Download className="mr-2 h-4 w-4" />
-                        Download
-                    </ContextMenuPrimitive.Item>
+                        {t('contextMenu.exportAs')}
+                    </ContextMenuSubTrigger>
+                    <ContextMenuSubContent>
+                        <ContextMenuItem onClick={() => handleDownload('md')}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            {t('export.markdown')}
+                        </ContextMenuItem>
+                        <ContextMenuItem onClick={() => handleDownload('html')}>
+                            <FileCode className="mr-2 h-4 w-4" />
+                            {t('export.html')}
+                        </ContextMenuItem>
+                        <ContextMenuItem onClick={() => handleDownload('txt')}>
+                            <FileImage className="mr-2 h-4 w-4" />
+                            {t('contextMenu.plainText')}
+                        </ContextMenuItem>
+                    </ContextMenuSubContent>
+                </ContextMenuSub>
 
-                    <ContextMenuPrimitive.Separator className="-mx-1 my-1 h-px bg-border" />
+                <ContextMenuSeparator />
 
-                    <ContextMenuPrimitive.Item
-                        onClick={handleDelete}
-                        className={cn(
-                            'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5',
-                            'text-sm text-red-500 outline-none',
-                            'focus:bg-red-50 dark:focus:bg-red-950',
-                            'transition-colors'
-                        )}
-                    >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                    </ContextMenuPrimitive.Item>
-                </ContextMenuPrimitive.Content>
-            </ContextMenuPrimitive.Portal>
-        </ContextMenuPrimitive.Root>
+                <ContextMenuItem variant="danger" onClick={handleDelete}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    {t('common.delete')}
+                </ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
     );
 }
