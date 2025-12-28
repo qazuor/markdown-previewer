@@ -33,6 +33,11 @@
         "view": "Ver",
         "help": "Ayuda"
     },
+    "zen": {
+        "exit": "ESC para salir",
+        "title": "Modo Zen",
+        "description": "Escritura sin distracciones"
+    },
     "editor": {
         "untitled": "Sin título",
         "placeholder": "Empieza a escribir...",
@@ -113,7 +118,25 @@
         "markdown": "Markdown (.md)",
         "html": "HTML",
         "pdf": "PDF",
+        "png": "Imagen PNG",
+        "jpeg": "Imagen JPEG",
         "image": "Imagen"
+    },
+    "preview": {
+        "title": "Vista Previa",
+        "openInNewWindow": "Abrir en Nueva Ventana",
+        "connected": "Conectado",
+        "waitingForEditor": "Esperando al Editor",
+        "openEditorHint": "Abre la ventana principal del editor para ver la vista previa",
+        "notSupported": "No Soportado",
+        "browserNotSupported": "Tu navegador no soporta comunicación entre ventanas"
+    },
+    "layout": {
+        "showEditor": "Mostrar Editor",
+        "showPreview": "Mostrar Vista Previa",
+        "hideEditor": "Ocultar Editor",
+        "hidePreview": "Ocultar Vista Previa",
+        "splitView": "Vista Dividida"
     },
     "github": {
         "connect": "Conectar GitHub",
