@@ -1,3 +1,4 @@
+import { Header } from '@/components/header';
 import { MainLayout } from '@/components/layout';
 import { KeyboardShortcutsModal, SettingsModal, VersionDiffModal, VersionHistoryModal } from '@/components/modals';
 import { Sidebar } from '@/components/sidebar';
@@ -34,7 +35,7 @@ export function App() {
     const { isSaving, save } = useAutoSave(activeDocument);
 
     // File import and drag & drop
-    const { importFiles } = useFileImport();
+    const { importFiles, openFileDialog } = useFileImport();
     const handleFileDrop = useCallback(
         (files: FileList) => {
             importFiles(files);
@@ -182,14 +183,17 @@ export function App() {
 
     return (
         <div className="flex h-screen flex-col bg-bg-primary text-text-primary">
+            {/* Header with logo and file menu */}
+            <Header onImport={openFileDialog} onSave={save} className="shrink-0" />
+
             {/* Tab bar */}
             <TabBar className="shrink-0" />
 
-            {/* Toolbar */}
+            {/* Document formatting toolbar */}
             <Toolbar editorView={editorView} className="shrink-0" />
 
             {/* Main content */}
-            <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-1 min-h-0 overflow-hidden">
                 {/* Sidebar */}
                 <Sidebar
                     content={activeDocument?.content}
@@ -202,7 +206,7 @@ export function App() {
                 />
 
                 {/* Editor and Preview */}
-                <MainLayout className="flex-1" onEditorViewReady={handleEditorViewReady} />
+                <MainLayout className="flex-1 min-w-0" onEditorViewReady={handleEditorViewReady} />
             </div>
 
             {/* Status bar */}
