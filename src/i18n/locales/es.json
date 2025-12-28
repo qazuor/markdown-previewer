@@ -23,7 +23,14 @@
         "ok": "OK",
         "loading": "Cargando...",
         "error": "Error",
-        "success": "Éxito"
+        "success": "Éxito",
+        "about": "Acerca de"
+    },
+    "menu": {
+        "file": "Archivo",
+        "edit": "Editar",
+        "view": "Ver",
+        "help": "Ayuda"
     },
     "editor": {
         "untitled": "Sin título",
