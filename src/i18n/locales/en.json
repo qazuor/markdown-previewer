@@ -23,7 +23,14 @@
         "ok": "OK",
         "loading": "Loading...",
         "error": "Error",
-        "success": "Success"
+        "success": "Success",
+        "about": "About"
+    },
+    "menu": {
+        "file": "File",
+        "edit": "Edit",
+        "view": "View",
+        "help": "Help"
     },
     "editor": {
         "untitled": "Untitled",
