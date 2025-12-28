@@ -27,8 +27,19 @@ export function MainLayout({ className, onEditorViewReady }: MainLayoutProps) {
 
     const activeDocumentId = useDocumentStore((state) => state.activeDocumentId);
     const documents = useDocumentStore((state) => state.documents);
+    const updateContent = useDocumentStore((state) => state.updateContent);
     const activeDocument = activeDocumentId ? (documents.get(activeDocumentId) ?? null) : null;
     const content = activeDocument?.content ?? '';
+
+    // Handle content change from preview (e.g., interactive checkboxes)
+    const handleContentChange = useCallback(
+        (newContent: string) => {
+            if (activeDocumentId) {
+                updateContent(activeDocumentId, newContent);
+            }
+        },
+        [activeDocumentId, updateContent]
+    );
 
     // Sync scroll settings and functions
     const syncScroll = useSettingsStore((state) => state.syncScroll);
@@ -141,7 +152,7 @@ export function MainLayout({ className, onEditorViewReady }: MainLayoutProps) {
                     {viewMode === 'editor' ? (
                         <Editor className="h-full" onViewReady={onEditorViewReady} />
                     ) : (
-                        <Preview content={content} className="h-full" />
+                        <Preview content={content} className="h-full" onContentChange={handleContentChange} />
                     )}
                 </div>
             </div>
@@ -150,7 +161,7 @@ export function MainLayout({ className, onEditorViewReady }: MainLayoutProps) {
 
     // Desktop split view
     return (
-        <div className={cn('h-full', className)}>
+        <div className={cn('h-full w-full min-w-0 overflow-hidden', className)}>
             <SplitPane
                 left={
                     <Editor
@@ -166,6 +177,7 @@ export function MainLayout({ className, onEditorViewReady }: MainLayoutProps) {
                         className="h-full"
                         onScroll={handlePreviewScroll}
                         onScrollToReady={handlePreviewScrollToReady}
+                        onContentChange={handleContentChange}
                     />
                 }
                 defaultSize={splitSize}

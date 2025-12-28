@@ -1,7 +1,10 @@
 import { useSettingsStore } from '@/stores/settingsStore';
 import { cn } from '@/utils/cn';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { processCallouts } from './Callout';
+import { processChecklists, toggleCheckboxInContent } from './Checklist';
 import { processCodeBlocks } from './CodeBlock';
+import { processMermaidBlocks } from './Mermaid';
 import { PreviewLoading } from './PreviewLoading';
 import { useMarkdown, usePreviewTheme } from './hooks';
 
@@ -10,12 +13,13 @@ interface PreviewProps {
     className?: string;
     onScroll?: (scrollPercent: number) => void;
     onScrollToReady?: (scrollTo: (percent: number) => void) => void;
+    onContentChange?: (newContent: string) => void;
 }
 
 /**
  * Markdown preview component
  */
-export function Preview({ content, className, onScroll, onScrollToReady }: PreviewProps) {
+export function Preview({ content, className, onScroll, onScrollToReady, onContentChange }: PreviewProps) {
     const { themeClass, isDark } = usePreviewTheme();
     const { previewFontSize, fontFamily } = useSettingsStore();
     const { html, isLoading, error } = useMarkdown(content, {
@@ -25,13 +29,32 @@ export function Preview({ content, className, onScroll, onScrollToReady }: Previ
 
     const containerRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
+    const contentRefForChecklist = useRef(content);
 
-    // Process code blocks after render
+    // Keep content ref updated for checklist handler
+    useEffect(() => {
+        contentRefForChecklist.current = content;
+    }, [content]);
+
+    // Handle checkbox toggle in task lists
+    const handleChecklistToggle = useCallback(
+        (taskIndex: number, checked: boolean) => {
+            if (!onContentChange) return;
+            const newContent = toggleCheckboxInContent(contentRefForChecklist.current, taskIndex, checked);
+            onContentChange(newContent);
+        },
+        [onContentChange]
+    );
+
+    // Process code blocks, mermaid diagrams, callouts, and checklists after render
     useEffect(() => {
         if (contentRef.current && html) {
+            processCallouts(contentRef.current);
             processCodeBlocks(contentRef.current);
+            processMermaidBlocks(contentRef.current, isDark);
+            processChecklists(contentRef.current, handleChecklistToggle);
         }
-    }, [html]);
+    }, [html, isDark, handleChecklistToggle]);
 
     // Handle scroll events
     const handleScroll = useCallback(() => {
