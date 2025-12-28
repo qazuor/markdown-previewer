@@ -1,6 +1,7 @@
 import { type TocItem, extractToc } from '@/services/markdown/toc';
 import { cn } from '@/utils/cn';
 import { useMemo } from 'react';
+import { TOCContextMenu } from './TOCContextMenu';
 
 interface TableOfContentsProps {
     content: string;
@@ -66,21 +67,28 @@ export function TableOfContents({ content, activeLine, onNavigate, className }: 
                 <ul className="space-y-0.5">
                     {toc.map((item) => (
                         <li key={item.id}>
-                            <button
-                                type="button"
-                                onClick={() => onNavigate?.(item.line)}
-                                className={cn(
-                                    'w-full text-left px-2 py-1 rounded-md',
-                                    'text-sm truncate',
-                                    'hover:bg-bg-tertiary',
-                                    'transition-colors',
-                                    levelIndent[item.level],
-                                    item.level === 1 && 'font-medium',
-                                    item.id === activeId ? 'bg-bg-tertiary text-primary-500' : 'text-text-secondary'
-                                )}
+                            <TOCContextMenu
+                                headingId={item.id}
+                                headingText={item.text}
+                                headingLine={item.line}
+                                onNavigate={(line) => onNavigate?.(line)}
                             >
-                                {item.text}
-                            </button>
+                                <button
+                                    type="button"
+                                    onClick={() => onNavigate?.(item.line)}
+                                    className={cn(
+                                        'w-full text-left px-2 py-1 rounded-md',
+                                        'text-sm truncate',
+                                        'hover:bg-bg-tertiary',
+                                        'transition-colors',
+                                        levelIndent[item.level],
+                                        item.level === 1 && 'font-medium',
+                                        item.id === activeId ? 'bg-bg-tertiary text-primary-500' : 'text-text-secondary'
+                                    )}
+                                >
+                                    {item.text}
+                                </button>
+                            </TOCContextMenu>
                         </li>
                     ))}
                 </ul>
