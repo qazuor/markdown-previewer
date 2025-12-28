@@ -76,10 +76,25 @@ export function useFileImport() {
         [importFile]
     );
 
+    const openFileDialog = useCallback(() => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = SUPPORTED_EXTENSIONS.join(',');
+        input.multiple = true;
+        input.onchange = async (e) => {
+            const files = (e.target as HTMLInputElement).files;
+            if (files && files.length > 0) {
+                await importFiles(files);
+            }
+        };
+        input.click();
+    }, [importFiles]);
+
     return {
         importFile,
         importFiles,
         isValidFile,
+        openFileDialog,
         supportedExtensions: SUPPORTED_EXTENSIONS
     };
 }
