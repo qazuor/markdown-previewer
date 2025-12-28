@@ -1,11 +1,14 @@
 import { Editor } from '@/components/editor';
 import { Preview } from '@/components/preview';
-import { SplitPane } from '@/components/ui';
+import { SplitPane, Tooltip } from '@/components/ui';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useUIStore } from '@/stores/uiStore';
 import { cn } from '@/utils/cn';
 import type { EditorView } from '@codemirror/view';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface MainLayoutProps {
     className?: string;
@@ -15,15 +18,22 @@ interface MainLayoutProps {
 // Breakpoint for responsive behavior
 const MOBILE_BREAKPOINT = 768;
 
-type ViewMode = 'split' | 'editor' | 'preview';
-
 /**
  * Main content layout with editor and preview
  */
 export function MainLayout({ className, onEditorViewReady }: MainLayoutProps) {
-    const [viewMode, setViewMode] = useState<ViewMode>('split');
+    const { t } = useTranslation();
     const [isMobile, setIsMobile] = useState(false);
     const [splitSize, setSplitSize] = useState(50);
+
+    // View mode from store
+    const viewMode = useUIStore((state) => state.viewMode);
+    const setViewMode = useUIStore((state) => state.setViewMode);
+
+    // Toggle functions for collapse buttons
+    const expandEditor = useCallback(() => setViewMode('editor'), [setViewMode]);
+    const expandPreview = useCallback(() => setViewMode('preview'), [setViewMode]);
+    const showSplit = useCallback(() => setViewMode('split'), [setViewMode]);
 
     const activeDocumentId = useDocumentStore((state) => state.activeDocumentId);
     const documents = useDocumentStore((state) => state.documents);
@@ -108,11 +118,10 @@ export function MainLayout({ className, onEditorViewReady }: MainLayoutProps) {
         if (isMobile && viewMode === 'split') {
             setViewMode('editor');
         }
-    }, [isMobile, viewMode]);
+    }, [isMobile, viewMode, setViewMode]);
 
     const handleSplitResize = useCallback((size: number) => {
         setSplitSize(size);
-        // Could save to localStorage here
     }, []);
 
     // Mobile tab view
@@ -159,26 +168,99 @@ export function MainLayout({ className, onEditorViewReady }: MainLayoutProps) {
         );
     }
 
+    // Collapse button component - highly visible colored background
+    const CollapseButton = ({
+        direction,
+        onClick,
+        tooltip,
+        icon: Icon
+    }: {
+        direction: 'left' | 'right';
+        onClick: () => void;
+        tooltip: string;
+        icon: typeof ChevronLeft;
+    }) => (
+        <Tooltip content={tooltip}>
+            <button
+                type="button"
+                onClick={onClick}
+                style={{
+                    height: '1.9rem',
+                    right: direction === 'left' ? '0.2rem' : undefined,
+                    left: direction === 'right' ? '0.2rem' : undefined
+                }}
+                className={cn(
+                    'absolute top-1 z-10',
+                    'w-7 flex items-center justify-center',
+                    'bg-primary-500 border-2 border-primary-600 rounded-md shadow-lg',
+                    'text-white',
+                    'hover:bg-primary-700 hover:border-primary-800 hover:shadow-xl',
+                    'focus:bg-primary-600 focus:border-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400',
+                    'transition-colors duration-200'
+                )}
+            >
+                <Icon className="h-5 w-5" />
+            </button>
+        </Tooltip>
+    );
+
+    // Desktop: Editor only view - button on right edge, icon points left to indicate "restore preview"
+    if (!isMobile && viewMode === 'editor') {
+        return (
+            <div className={cn('h-full w-full min-w-0 overflow-hidden relative', className)}>
+                <Editor
+                    className="h-full"
+                    onViewReady={onEditorViewReady}
+                    onScroll={handleEditorScroll}
+                    onScrollToReady={handleEditorScrollToReady}
+                />
+                <CollapseButton direction="left" onClick={showSplit} tooltip={t('layout.showPreview')} icon={ChevronLeft} />
+            </div>
+        );
+    }
+
+    // Desktop: Preview only view - button on left edge, icon points right to indicate "restore editor"
+    if (!isMobile && viewMode === 'preview') {
+        return (
+            <div className={cn('h-full w-full min-w-0 overflow-hidden relative', className)}>
+                <Preview
+                    content={content}
+                    className="h-full"
+                    onScroll={handlePreviewScroll}
+                    onScrollToReady={handlePreviewScrollToReady}
+                    onContentChange={handleContentChange}
+                />
+                <CollapseButton direction="right" onClick={showSplit} tooltip={t('layout.showEditor')} icon={ChevronRight} />
+            </div>
+        );
+    }
+
     // Desktop split view
     return (
         <div className={cn('h-full w-full min-w-0 overflow-hidden', className)}>
             <SplitPane
                 left={
-                    <Editor
-                        className="h-full"
-                        onViewReady={onEditorViewReady}
-                        onScroll={handleEditorScroll}
-                        onScrollToReady={handleEditorScrollToReady}
-                    />
+                    <div className="relative h-full">
+                        <Editor
+                            className="h-full"
+                            onViewReady={onEditorViewReady}
+                            onScroll={handleEditorScroll}
+                            onScrollToReady={handleEditorScrollToReady}
+                        />
+                        <CollapseButton direction="left" onClick={expandPreview} tooltip={t('layout.hideEditor')} icon={ChevronLeft} />
+                    </div>
                 }
                 right={
-                    <Preview
-                        content={content}
-                        className="h-full"
-                        onScroll={handlePreviewScroll}
-                        onScrollToReady={handlePreviewScrollToReady}
-                        onContentChange={handleContentChange}
-                    />
+                    <div className="relative h-full">
+                        <Preview
+                            content={content}
+                            className="h-full"
+                            onScroll={handlePreviewScroll}
+                            onScrollToReady={handlePreviewScrollToReady}
+                            onContentChange={handleContentChange}
+                        />
+                        <CollapseButton direction="right" onClick={expandEditor} tooltip={t('layout.hidePreview')} icon={ChevronRight} />
+                    </div>
                 }
                 defaultSize={splitSize}
                 minSize={20}
