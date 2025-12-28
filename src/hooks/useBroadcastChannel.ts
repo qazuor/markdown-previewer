@@ -63,7 +63,7 @@ export function useBroadcastChannel<T>(options: UseBroadcastChannelOptions<T>): 
 
 // Message types for preview sync
 export interface PreviewSyncMessage {
-    type: 'content' | 'theme' | 'disconnect';
+    type: 'content' | 'theme' | 'disconnect' | 'request';
     payload: {
         content?: string;
         theme?: 'light' | 'dark';
@@ -74,10 +74,16 @@ export interface PreviewSyncMessage {
 /**
  * Hook specifically for preview window synchronization
  */
-export function usePreviewSync(isMainWindow: boolean) {
+export function usePreviewSync(isMainWindow: boolean, onContentRequest?: () => void) {
     const [content, setContent] = useState('');
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const [isEditorConnected, setIsEditorConnected] = useState(isMainWindow);
+    const onContentRequestRef = useRef(onContentRequest);
+
+    // Keep callback ref updated
+    useEffect(() => {
+        onContentRequestRef.current = onContentRequest;
+    }, [onContentRequest]);
 
     const handleMessage = useCallback((message: PreviewSyncMessage) => {
         switch (message.type) {
@@ -97,6 +103,10 @@ export function usePreviewSync(isMainWindow: boolean) {
                 break;
             case 'disconnect':
                 setIsEditorConnected(false);
+                break;
+            case 'request':
+                // Preview window is requesting content
+                onContentRequestRef.current?.();
                 break;
         }
     }, []);
@@ -119,6 +129,13 @@ export function usePreviewSync(isMainWindow: boolean) {
             };
         }
     }, [isMainWindow, postMessage]);
+
+    // Preview window: request content when connected
+    useEffect(() => {
+        if (!isMainWindow && isConnected) {
+            postMessage({ type: 'request', payload: {} });
+        }
+    }, [isMainWindow, isConnected, postMessage]);
 
     const syncContent = useCallback(
         (newContent: string, newTheme: 'light' | 'dark') => {
