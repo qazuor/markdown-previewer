@@ -33,6 +33,11 @@
         "view": "View",
         "help": "Help"
     },
+    "zen": {
+        "exit": "ESC to exit",
+        "title": "Zen Mode",
+        "description": "Distraction-free writing"
+    },
     "editor": {
         "untitled": "Untitled",
         "placeholder": "Start writing...",
@@ -113,7 +118,25 @@
         "markdown": "Markdown (.md)",
         "html": "HTML",
         "pdf": "PDF",
+        "png": "PNG Image",
+        "jpeg": "JPEG Image",
         "image": "Image"
+    },
+    "preview": {
+        "title": "Preview",
+        "openInNewWindow": "Open in New Window",
+        "connected": "Connected",
+        "waitingForEditor": "Waiting for Editor",
+        "openEditorHint": "Open the main editor window to see the preview",
+        "notSupported": "Not Supported",
+        "browserNotSupported": "Your browser does not support cross-window communication"
+    },
+    "layout": {
+        "showEditor": "Show Editor",
+        "showPreview": "Show Preview",
+        "hideEditor": "Hide Editor",
+        "hidePreview": "Hide Preview",
+        "splitView": "Split View"
     },
     "github": {
         "connect": "Connect GitHub",
