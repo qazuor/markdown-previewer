@@ -52,6 +52,41 @@ export function updateMermaidTheme(isDark: boolean): void {
     });
 }
 
+// Mermaid diagram type keywords that indicate a mermaid code block
+const MERMAID_KEYWORDS = [
+    'graph ',
+    'graph\n',
+    'flowchart ',
+    'flowchart\n',
+    'sequenceDiagram',
+    'classDiagram',
+    'stateDiagram',
+    'erDiagram',
+    'gantt',
+    'pie ',
+    'pie\n',
+    'gitGraph',
+    'journey',
+    'mindmap',
+    'timeline',
+    'quadrantChart',
+    'sankey',
+    'xychart',
+    'block-beta',
+    'architecture',
+    'zenuml',
+    'packet-beta',
+    'kanban'
+];
+
+/**
+ * Check if content appears to be a mermaid diagram
+ */
+function isMermaidContent(content: string): boolean {
+    const trimmed = content.trim();
+    return MERMAID_KEYWORDS.some((keyword) => trimmed.startsWith(keyword));
+}
+
 /**
  * Process mermaid code blocks in the preview HTML
  * Converts ```mermaid code blocks into rendered diagrams
@@ -60,12 +95,28 @@ export async function processMermaidBlocks(container: HTMLElement, isDark: boole
     // Update theme before processing
     updateMermaidTheme(isDark);
 
-    // Find all code blocks with language-mermaid class
-    const mermaidBlocks = container.querySelectorAll('code.language-mermaid');
+    // Find all code blocks - check both by class and by content
+    // (Shiki may transform the class, so we also detect by content)
+    const allCodeBlocks = container.querySelectorAll('pre > code, pre code');
+    const mermaidBlocks: Element[] = [];
+
+    for (const block of allCodeBlocks) {
+        // Check if it has the language-mermaid class
+        if (block.classList.contains('language-mermaid')) {
+            mermaidBlocks.push(block);
+            continue;
+        }
+
+        // Check if the content looks like mermaid (for Shiki-processed blocks)
+        const content = block.textContent ?? '';
+        if (isMermaidContent(content)) {
+            mermaidBlocks.push(block);
+        }
+    }
 
     for (const block of mermaidBlocks) {
-        const pre = block.parentElement;
-        if (!pre || pre.tagName !== 'PRE') continue;
+        const pre = block.closest('pre');
+        if (!pre) continue;
 
         // Skip if already processed
         if (pre.classList.contains('mermaid-processed')) continue;
