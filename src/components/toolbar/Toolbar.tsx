@@ -1,6 +1,6 @@
 import { cn } from '@/utils/cn';
 import type { EditorView } from '@codemirror/view';
-import { ExportMenu } from './ExportMenu';
+import { EmojiPicker } from './EmojiPicker';
 import { FormatButtonGroup, ToolbarSeparator } from './FormatButton';
 import {
     BoldButton,
@@ -25,16 +25,18 @@ interface ToolbarProps {
 }
 
 /**
- * Main toolbar with formatting buttons
+ * Document formatting toolbar
  */
 export function Toolbar({ editorView, className }: ToolbarProps) {
-    const { handleFormat, handleHeading, handleInsert, handleList } = useToolbarActions({ editorView });
+    const { handleFormat, handleHeading, handleInsert, handleList, handleEmojiInsert } = useToolbarActions({
+        editorView
+    });
 
     return (
         <div
             className={cn(
                 'flex items-center gap-1 px-2 py-1.5',
-                'bg-bg-secondary border-b border-border',
+                'bg-bg-tertiary border-b border-border',
                 'overflow-x-auto scrollbar-thin',
                 className
             )}
@@ -86,11 +88,10 @@ export function Toolbar({ editorView, className }: ToolbarProps) {
                 <TaskListButton onList={handleList} />
             </FormatButtonGroup>
 
-            {/* Spacer */}
-            <div className="flex-1" />
+            <ToolbarSeparator />
 
-            {/* Export menu */}
-            <ExportMenu />
+            {/* Emoji */}
+            <EmojiPicker onEmojiSelect={handleEmojiInsert} />
         </div>
     );
 }
