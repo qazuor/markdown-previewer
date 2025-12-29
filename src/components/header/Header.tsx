@@ -1,3 +1,4 @@
+import { HelpButton } from '@/components/header/HelpButton';
 import { renderMarkdown } from '@/services/markdown';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -30,6 +31,8 @@ import { useTranslation } from 'react-i18next';
 interface HeaderProps {
     onImport?: () => void;
     onSave?: () => void;
+    onShowShortcuts: () => void;
+    onStartTour: () => void;
     className?: string;
 }
 
@@ -45,7 +48,7 @@ interface MenuItem {
     children?: MenuItem[];
 }
 
-export function Header({ onImport, onSave, className }: HeaderProps) {
+export function Header({ onImport, onSave, onShowShortcuts, onStartTour, className }: HeaderProps) {
     const { t } = useTranslation();
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const [isExporting, setIsExporting] = useState(false);
@@ -362,6 +365,12 @@ export function Header({ onImport, onSave, className }: HeaderProps) {
                 {renderMenu('view', t('menu.view') || 'View', viewMenuItems)}
                 {renderMenu('help', t('menu.help') || 'Help', helpMenuItems)}
             </nav>
+
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Help Button */}
+            <HelpButton onShowShortcuts={onShowShortcuts} onStartTour={onStartTour} />
 
             {/* Backdrop */}
             {activeMenu && (
