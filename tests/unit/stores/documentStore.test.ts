@@ -1,5 +1,4 @@
 import { useDocumentStore } from '@/stores/documentStore';
-import type { Document, Version } from '@/types';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -62,7 +61,7 @@ describe('documentStore', () => {
             const { createDocument, openDocument } = useDocumentStore.getState();
 
             const id1 = createDocument();
-            const id2 = createDocument();
+            createDocument(); // Create second document to ensure multiple exist
 
             act(() => {
                 openDocument(id1);

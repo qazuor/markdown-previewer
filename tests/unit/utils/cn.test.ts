@@ -40,8 +40,7 @@ describe('cn', () => {
     });
 
     it('should handle number values by filtering them out', () => {
-        // @ts-expect-error Testing invalid input type
-        expect(cn('class1', 42, 'class2')).toBe('class1 class2');
+        expect(cn('class1', 42 as unknown as string, 'class2')).toBe('class1 class2');
     });
 
     it('should return empty string for all falsy values', () => {
@@ -60,7 +59,6 @@ describe('cn', () => {
     });
 
     it('should handle boolean true by filtering it out', () => {
-        // @ts-expect-error Testing invalid input type
-        expect(cn('class1', true, 'class2')).toBe('class1 class2');
+        expect(cn('class1', true as unknown as string, 'class2')).toBe('class1 class2');
     });
 });

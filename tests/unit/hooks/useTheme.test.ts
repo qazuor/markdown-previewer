@@ -110,11 +110,9 @@ describe('useTheme', () => {
         expect(document.documentElement.classList.contains('dark')).toBe(false);
 
         // Simulate system theme change to dark
-        if (mediaQueryListener) {
-            act(() => {
-                mediaQueryListener({ matches: true } as MediaQueryListEvent);
-            });
-        }
+        act(() => {
+            mediaQueryListener?.({ matches: true } as MediaQueryListEvent);
+        });
 
         expect(document.documentElement.classList.contains('dark')).toBe(true);
     });

@@ -73,10 +73,10 @@ describe('uiStore', () => {
                 const { setSidebarSection } = useUIStore.getState();
 
                 act(() => {
-                    setSidebarSection('outline');
+                    setSidebarSection('toc');
                 });
 
-                expect(useUIStore.getState().sidebarSection).toBe('outline');
+                expect(useUIStore.getState().sidebarSection).toBe('toc');
             });
 
             it('should open sidebar when setting section', () => {
@@ -84,11 +84,11 @@ describe('uiStore', () => {
 
                 act(() => {
                     setSidebarOpen(false);
-                    setSidebarSection('versions');
+                    setSidebarSection('search');
                 });
 
                 const state = useUIStore.getState();
-                expect(state.sidebarSection).toBe('versions');
+                expect(state.sidebarSection).toBe('search');
                 expect(state.sidebarOpen).toBe(true);
             });
         });
@@ -269,8 +269,8 @@ describe('uiStore', () => {
                 const { setSearchResults } = useUIStore.getState();
 
                 const results: SearchResult[] = [
-                    { line: 1, column: 5, text: 'result 1', match: 'test' },
-                    { line: 3, column: 10, text: 'result 2', match: 'test' }
+                    { line: 1, column: 5, context: 'result 1', match: 'test' },
+                    { line: 3, column: 10, context: 'result 2', match: 'test' }
                 ];
 
                 act(() => {
@@ -343,7 +343,7 @@ describe('uiStore', () => {
             it('should clear all search state', () => {
                 const { setSearchQuery, setSearchResults, setReplaceQuery, clearSearch } = useUIStore.getState();
 
-                const results: SearchResult[] = [{ line: 1, column: 5, text: 'result', match: 'test' }];
+                const results: SearchResult[] = [{ line: 1, column: 5, context: 'result', match: 'test' }];
 
                 act(() => {
                     setSearchQuery('query');
