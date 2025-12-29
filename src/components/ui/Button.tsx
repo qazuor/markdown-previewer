@@ -1,4 +1,5 @@
 import { cn } from '@/utils/cn';
+import { forwardRef } from 'react';
 import type React from 'react';
 
 type ButtonVariant = 'default' | 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive';
@@ -65,24 +66,30 @@ const iconSizeStyles = {
 
 /**
  * Icon-only button with accessible label
+ * Uses forwardRef for compatibility with Radix UI components
  */
-export function IconButton({ icon, label, variant = 'ghost', size = 'md', className, ...props }: IconButtonProps) {
-    return (
-        <button
-            type="button"
-            aria-label={label}
-            className={cn(
-                'inline-flex items-center justify-center rounded-md',
-                'transition-colors duration-150',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
-                'disabled:pointer-events-none disabled:opacity-50',
-                variantStyles[variant],
-                iconSizeStyles[size],
-                className
-            )}
-            {...props}
-        >
-            {icon}
-        </button>
-    );
-}
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+    ({ icon, label, variant = 'ghost', size = 'md', className, ...props }, ref) => {
+        return (
+            <button
+                ref={ref}
+                type="button"
+                aria-label={label}
+                className={cn(
+                    'inline-flex items-center justify-center rounded-md',
+                    'transition-colors duration-150',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                    'disabled:pointer-events-none disabled:opacity-50',
+                    variantStyles[variant],
+                    iconSizeStyles[size],
+                    className
+                )}
+                {...props}
+            >
+                {icon}
+            </button>
+        );
+    }
+);
+
+IconButton.displayName = 'IconButton';
