@@ -104,14 +104,14 @@ describe('settingsStore', () => {
             expect(useSettingsStore.getState().theme).toBe('light');
         });
 
-        it('should set theme to auto', () => {
+        it('should set theme to system', () => {
             const { setTheme } = useSettingsStore.getState();
 
             act(() => {
-                setTheme('auto');
+                setTheme('system');
             });
 
-            expect(useSettingsStore.getState().theme).toBe('auto');
+            expect(useSettingsStore.getState().theme).toBe('system');
         });
     });
 
@@ -169,8 +169,8 @@ describe('settingsStore', () => {
             const initialTheme = useSettingsStore.getState().theme;
 
             act(() => {
-                // @ts-expect-error Testing non-boolean setting behavior
-                toggleSetting('theme');
+                // Testing that passing a non-boolean setting key doesn't crash
+                (toggleSetting as (key: string) => void)('theme');
             });
 
             expect(useSettingsStore.getState().theme).toBe(initialTheme);
