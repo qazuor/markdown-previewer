@@ -119,12 +119,25 @@ export function Preview({ content, className, onScroll, onScrollToReady, onConte
             <div
                 ref={containerRef}
                 onScroll={handleScroll}
-                className={cn('h-full overflow-auto', 'bg-white dark:bg-secondary-950', themeClass, isDark && 'dark', className)}
+                className={cn(
+                    'h-full overflow-auto relative',
+                    'bg-white dark:bg-secondary-950',
+                    themeClass,
+                    isDark && 'dark',
+                    isLoading && 'cursor-wait',
+                    className
+                )}
             >
+                {/* Loading overlay with spinner */}
+                {isLoading && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-secondary-950/50 backdrop-blur-[1px]">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-secondary-300 border-t-primary-500" />
+                    </div>
+                )}
                 <div
                     ref={contentRef}
                     data-preview-content
-                    className={cn('preview-content prose max-w-none p-6', isDark && 'prose-invert')}
+                    className={cn('preview-content prose max-w-none p-6', isDark && 'prose-invert', isLoading && 'opacity-50')}
                     style={contentStyle}
                     // biome-ignore lint/security/noDangerouslySetInnerHtml: Content is sanitized by rehype-sanitize
                     dangerouslySetInnerHTML={{ __html: html }}
