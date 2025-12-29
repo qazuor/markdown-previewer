@@ -604,7 +604,7 @@ When you've completed a task (tests pass, lint clean, code meets standards):
 
    ✅ Task marked as completed!
       📝 TODOs.md updated
-      🔗 GitHub: https://github.com/qazuor/markdown-previewer/issues/124
+      🔗 GitHub: https://github.com/qazuor/markview/issues/124
 
    💡 Don't forget to push: git push
    ```

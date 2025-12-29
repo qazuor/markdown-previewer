@@ -5,10 +5,10 @@
         "installedAt": "2025-12-26T04:40:24.329Z"
     },
     "project": {
-        "name": "markdown-previewer",
-        "description": "Markdown Previewer",
+        "name": "markview",
+        "description": "MarkView",
         "org": "qazuor",
-        "repo": "markdown-previewer",
+        "repo": "markview",
         "entityType": "item",
         "entityTypePlural": "items",
         "author": "qazuor@gmail.com"
@@ -273,7 +273,7 @@
             "refactorPath": ".claude/sessions/refactor",
             "archivePath": ".claude/sessions/archive",
             "schemasPath": ".claude/schemas",
-            "projectRoot": "/home/qazuor/projects/APPS/markdown-previewer"
+            "projectRoot": "/home/qazuor/projects/APPS/markview"
         },
         "targets": {
             "coverage": 90,

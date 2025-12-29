@@ -35,7 +35,7 @@ Execute comprehensive test suite and validate coverage requirements. Stops at fi
 
 | Step | Action |
 |------|--------|
-| 1 | Navigate to /home/qazuor/projects/APPS/markdown-previewer |
+| 1 | Navigate to /home/qazuor/projects/APPS/markview |
 | 2 | Execute pnpm test |
 | 3 | Run all test suites |
 | 4 | Stop on first failure |

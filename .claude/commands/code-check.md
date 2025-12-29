@@ -34,7 +34,7 @@ Run linting and type checking validation across the codebase. Stops at first err
 
 | Step | Action |
 |------|--------|
-| 1 | Navigate to /home/qazuor/projects/APPS/markdown-previewer |
+| 1 | Navigate to /home/qazuor/projects/APPS/markview |
 | 2 | Execute pnpm typecheck |
 | 3 | Validate type compilation |
 | 4 | Stop on first error |

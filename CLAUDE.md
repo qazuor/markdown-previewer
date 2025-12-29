@@ -2,13 +2,13 @@
 
 ## Project Overview
 
-**markdown-previewer** - Markdown Previewer
+**markview** - MarkView
 
 ## Repository
 
 - **Organization:** qazuor
-- **Repository:** markdown-previewer
-- **GitHub:** https://github.com/qazuor/markdown-previewer
+- **Repository:** markview
+- **GitHub:** https://github.com/qazuor/markview
 
 ## Tech Stack
 
@@ -26,7 +26,7 @@
 ## Project Structure
 
 ```text
-markdown-previewer/
+markview/
 ├── src/              # Source code
 ├── tests/            # Test files
 ├── docs/             # Documentation

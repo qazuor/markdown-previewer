@@ -9,14 +9,14 @@ Get up and running with the Claude Code workflow system in 15 minutes.
 Before starting, ensure you have:
 
 - [x] Claude Code CLI installed
-- [x] Repository cloned: `git clone https://github.com/qazuor/markdown-previewer.git`
+- [x] Repository cloned: `git clone https://github.com/qazuor/markview.git`
 - [x] Node.js ≥18 installed
 - [x] pnpm ≥8.15.6 installed
 
 **Verify installation:**
 
 ```bash
-cd markdown-previewer
+cd markview
 pnpm install
 ```
 
