@@ -1,12 +1,13 @@
 import { Header } from '@/components/header';
 import { MainLayout } from '@/components/layout';
-import { KeyboardShortcutsModal, SettingsModal, VersionDiffModal, VersionHistoryModal } from '@/components/modals';
+import { KeyboardShortcutsModal, OnboardingModal, SettingsModal, VersionDiffModal, VersionHistoryModal } from '@/components/modals';
+import { FeatureTour } from '@/components/onboarding/FeatureTour';
 import { Sidebar } from '@/components/sidebar';
 import { StatusBar } from '@/components/statusbar';
 import { TabBar } from '@/components/tabs';
 import { Toolbar } from '@/components/toolbar';
 import { DropOverlay } from '@/components/ui';
-import { useAutoSave, useDragAndDrop, useFileImport, useTheme, useZoom } from '@/hooks';
+import { useAutoSave, useDragAndDrop, useFileImport, useOnboarding, useTheme, useZoom } from '@/hooks';
 import { usePreviewSync } from '@/hooks/useBroadcastChannel';
 import { useDocumentStore, useSettingsStore, useUIStore } from '@/stores';
 import type { EditorView } from '@codemirror/view';
@@ -19,6 +20,19 @@ export function App() {
     useZoom(); // Global zoom keyboard shortcuts and mouse wheel
 
     const theme = useSettingsStore((state) => state.theme);
+
+    // Onboarding
+    const {
+        showOnboarding,
+        showTour,
+        currentTourStep,
+        completeOnboarding,
+        completeTour,
+        startTour,
+        skipTour,
+        nextTourStep,
+        previousTourStep
+    } = useOnboarding();
 
     const documents = useDocumentStore((state) => state.documents);
     const activeDocumentId = useDocumentStore((state) => state.activeDocumentId);
@@ -259,7 +273,15 @@ export function App() {
     return (
         <div className="flex h-screen flex-col bg-bg-primary text-text-primary">
             {/* Header with logo and file menu */}
-            {!zenMode && <Header onImport={openFileDialog} onSave={save} className="shrink-0" />}
+            {!zenMode && (
+                <Header
+                    onImport={openFileDialog}
+                    onSave={save}
+                    onShowShortcuts={() => openModal('shortcuts')}
+                    onStartTour={startTour}
+                    className="shrink-0"
+                />
+            )}
 
             {/* Tab bar */}
             {!zenMode && <TabBar className="shrink-0" />}
@@ -311,6 +333,7 @@ export function App() {
             )}
 
             {/* Modals */}
+            <OnboardingModal isOpen={showOnboarding} onClose={() => completeOnboarding(false)} onComplete={completeOnboarding} />
             <KeyboardShortcutsModal isOpen={activeModal === 'shortcuts'} onClose={closeModal} />
             <SettingsModal isOpen={activeModal === 'settings'} onClose={closeModal} />
 
@@ -337,6 +360,16 @@ export function App() {
 
             {/* Drag & drop overlay */}
             <DropOverlay isVisible={isDragging} />
+
+            {/* Feature Tour */}
+            <FeatureTour
+                isActive={showTour}
+                currentStep={currentTourStep}
+                onNext={nextTourStep}
+                onPrevious={previousTourStep}
+                onSkip={skipTour}
+                onComplete={completeTour}
+            />
         </div>
     );
 }
