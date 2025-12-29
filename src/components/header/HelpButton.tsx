@@ -42,7 +42,7 @@ export function HelpButton({ onShowShortcuts, onStartTour }: HelpButtonProps) {
     };
 
     const handleOpenDocs = () => {
-        window.open('https://github.com/qazuor/markdown-previewer', '_blank', 'noopener,noreferrer');
+        window.open('https://github.com/qazuor/markview', '_blank', 'noopener,noreferrer');
     };
 
     return (

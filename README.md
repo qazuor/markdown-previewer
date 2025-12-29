@@ -131,8 +131,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/qazuor/markdown-previewer.git
-cd markdown-previewer
+git clone https://github.com/qazuor/markview.git
+cd markview
 
 # Install dependencies
 pnpm install
@@ -207,7 +207,7 @@ pnpm preview
 ## Project Structure
 
 ```
-markdown-previewer/
+markview/
 ├── src/
 │   ├── app/              # App entry and providers
 │   ├── components/       # React components
@@ -342,7 +342,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 **qazuor**
 - GitHub: [@qazuor](https://github.com/qazuor)
-- Project: [markdown-previewer](https://github.com/qazuor/markdown-previewer)
+- Project: [markview](https://github.com/qazuor/markview)
 
 ---
 

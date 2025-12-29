@@ -39,14 +39,14 @@ Before you begin, ensure you have the following installed:
 2. Clone your fork locally:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/markdown-previewer.git
-cd markdown-previewer
+git clone https://github.com/YOUR_USERNAME/markview.git
+cd markview
 ```
 
 3. Add the upstream repository:
 
 ```bash
-git remote add upstream https://github.com/qazuor/markdown-previewer.git
+git remote add upstream https://github.com/qazuor/markview.git
 ```
 
 ---
@@ -89,7 +89,7 @@ The application will be available at `http://localhost:5173`
 ## Project Structure
 
 ```
-markdown-previewer/
+markview/
 ├── src/
 │   ├── app/                  # Application entry point
 │   │   ├── App.tsx          # Main App component
