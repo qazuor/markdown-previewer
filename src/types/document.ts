@@ -1,11 +1,23 @@
+/**
+ * Document sync status
+ * - local: Local file only, no cloud sync (legacy, treated as synced)
+ * - synced: Saved locally AND matches cloud version (green)
+ * - modified: Has unsaved local changes (orange)
+ * - syncing: Currently saving locally (blue/animated)
+ * - cloud-pending: Saved locally but different from cloud, needs push (yellow)
+ * - error: Sync failed (red)
+ */
+export type SyncStatus = 'local' | 'synced' | 'modified' | 'syncing' | 'cloud-pending' | 'error';
+
 export interface Document {
     id: string;
     name: string;
     content: string;
-    isModified: boolean;
+    syncStatus: SyncStatus;
     isManuallyNamed: boolean;
-    source: 'local' | 'github' | 'cloud';
+    source: 'local' | 'github' | 'gdrive';
     githubInfo?: GitHubFileInfo;
+    driveInfo?: DriveFileInfo;
     cursor: CursorPosition;
     scroll: ScrollPosition;
     createdAt: Date;
@@ -14,6 +26,8 @@ export interface Document {
     folderId?: string | null;
     syncVersion?: number;
     syncedAt?: Date | null;
+    // Original content hash for detecting changes (cloud files only)
+    originalContentHash?: string;
 }
 
 export interface GitHubFileInfo {
@@ -22,6 +36,12 @@ export interface GitHubFileInfo {
     path: string;
     sha: string;
     branch: string;
+}
+
+export interface DriveFileInfo {
+    fileId: string;
+    name: string;
+    mimeType: string;
 }
 
 export interface CursorPosition {
