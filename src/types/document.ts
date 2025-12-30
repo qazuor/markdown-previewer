@@ -4,12 +4,16 @@ export interface Document {
     content: string;
     isModified: boolean;
     isManuallyNamed: boolean;
-    source: 'local' | 'github';
+    source: 'local' | 'github' | 'cloud';
     githubInfo?: GitHubFileInfo;
     cursor: CursorPosition;
     scroll: ScrollPosition;
     createdAt: Date;
     updatedAt: Date;
+    // Cloud sync fields
+    folderId?: string | null;
+    syncVersion?: number;
+    syncedAt?: Date | null;
 }
 
 export interface GitHubFileInfo {
@@ -44,4 +48,14 @@ export interface DocumentStats {
     charactersNoSpaces: number;
     lines: number;
     readingTime: number;
+}
+
+export interface Folder {
+    id: string;
+    name: string;
+    parentId: string | null;
+    color: string | null;
+    sortOrder: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
