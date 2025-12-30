@@ -1,5 +1,4 @@
 export { useAuthMode, type AuthMode, type AuthRequiredFeature, type AuthRequiredProps } from './useAuthMode';
-export { useAutoSave } from './useAutoSave';
 export { useMobile, useTouch, BREAKPOINTS, type Breakpoint } from './useMobile';
 export { useBroadcastChannel, usePreviewSync, type PreviewSyncMessage } from './useBroadcastChannel';
 export {
