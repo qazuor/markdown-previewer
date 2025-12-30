@@ -436,5 +436,37 @@
         "filterPlaceholder": "Filtrar archivos...",
         "noMatchingFiles": "Sin archivos coincidentes",
         "localFiles": "ARCHIVOS LOCALES"
+    },
+    "auth": {
+        "sign_in": "Iniciar Sesión",
+        "sign_out": "Cerrar Sesión",
+        "sign_in_description": "Inicia sesión para sincronizar tus documentos entre dispositivos y acceder a tus repositorios de GitHub y archivos de Google Drive.",
+        "continue_with_github": "Continuar con GitHub",
+        "continue_with_google": "Continuar con Google",
+        "terms_notice": "Al iniciar sesión, aceptas nuestros Términos de Servicio y Política de Privacidad.",
+        "connected_services": "Servicios Conectados",
+        "sync_status": "Estado de Sincronización",
+        "errors": {
+            "github_failed": "Error al iniciar sesión con GitHub. Por favor, inténtalo de nuevo.",
+            "google_failed": "Error al iniciar sesión con Google. Por favor, inténtalo de nuevo."
+        }
+    },
+    "sync": {
+        "status": {
+            "synced": "Sincronizado",
+            "syncing": "Sincronizando...",
+            "pending": "Cambios pendientes",
+            "error": "Error de sincronización",
+            "offline": "Sin conexión"
+        },
+        "lastSynced": "Última sincronización: {{time}}",
+        "syncNow": "Sincronizar Ahora",
+        "conflict": {
+            "title": "Conflicto de Sincronización",
+            "description": "Este documento ha sido modificado en otro dispositivo.",
+            "keepLocal": "Mantener Versión Local",
+            "useCloud": "Usar Versión en la Nube",
+            "keepBoth": "Mantener Ambas"
+        }
     }
 }
