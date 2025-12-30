@@ -5,6 +5,7 @@ import { CursorPosition } from './CursorPosition';
 import { Encoding } from './Encoding';
 import { LineEnding } from './LineEnding';
 import { SaveStatus } from './SaveStatus';
+import { SyncStatus } from './SyncStatus';
 import { WordCount } from './WordCount';
 import { ZoomControls } from './ZoomControls';
 
@@ -43,8 +44,11 @@ export function StatusBar({ line = 1, column = 1, content = '', isModified = fal
                     <WordCount content={content} />
                 </div>
 
-                {/* Right section - only save status */}
-                <SaveStatus isModified={isModified} isSaving={isSaving} />
+                {/* Right section - save and sync status */}
+                <div className="flex items-center gap-2">
+                    <SyncStatus />
+                    <SaveStatus isModified={isModified} isSaving={isSaving} />
+                </div>
             </footer>
         );
     }
@@ -70,6 +74,7 @@ export function StatusBar({ line = 1, column = 1, content = '', isModified = fal
             {/* Right section */}
             <div className="flex items-center gap-4">
                 <ZoomControls />
+                <SyncStatus />
                 <SaveStatus isModified={isModified} isSaving={isSaving} />
                 <LineEnding />
                 <Encoding />
