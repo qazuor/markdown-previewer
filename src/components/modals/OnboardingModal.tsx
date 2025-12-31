@@ -1,6 +1,6 @@
 import { Modal, ModalFooter } from '@/components/ui/Modal';
 import { cn } from '@/utils/cn';
-import { ArrowRight, Check, ChevronLeft, ChevronRight, Code, Eye, Keyboard, ListTree, Search, Zap } from 'lucide-react';
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Cloud, Code, Eye, Keyboard, ListTree, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -114,14 +114,14 @@ export function OnboardingModal({ isOpen, onClose, onComplete }: OnboardingModal
                                 description={t('onboarding.features.preview.description')}
                             />
                             <FeatureCard
+                                icon={Cloud}
+                                title={t('onboarding.features.cloud.title')}
+                                description={t('onboarding.features.cloud.description')}
+                            />
+                            <FeatureCard
                                 icon={ListTree}
                                 title={t('onboarding.features.toc.title')}
                                 description={t('onboarding.features.toc.description')}
-                            />
-                            <FeatureCard
-                                icon={Search}
-                                title={t('onboarding.features.search.title')}
-                                description={t('onboarding.features.search.description')}
                             />
                         </div>
                     </div>

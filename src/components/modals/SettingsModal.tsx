@@ -1,9 +1,14 @@
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Modal } from '@/components/ui';
+import { checkConnection as checkGDriveConnection } from '@/services/gdrive';
+import { checkConnection as checkGitHubConnection } from '@/services/github';
+import { useGoogleDriveStore } from '@/stores/gdriveStore';
+import { useGitHubStore } from '@/stores/githubStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import type { ConflictResolution, Language, PreviewStyle, Theme } from '@/types/settings';
 import { cn } from '@/utils/cn';
-import { useEffect, useState } from 'react';
+import { Github, HardDrive, Loader2, Unplug } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SettingsModalProps {
@@ -48,6 +53,64 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const [activeTab, setActiveTab] = useState<SettingsTab>('appearance');
     const { t, i18n } = useTranslation();
     const { isAuthenticated } = useAuth();
+
+    // GitHub state
+    const githubConnected = useGitHubStore((s) => s.isConnected);
+    const githubUser = useGitHubStore((s) => s.user);
+    const githubLoading = useGitHubStore((s) => s.isLoading);
+    const setGitHubConnected = useGitHubStore((s) => s.setConnected);
+    const setGitHubLoading = useGitHubStore((s) => s.setLoading);
+    const disconnectGitHub = useGitHubStore((s) => s.disconnect);
+
+    // Google Drive state
+    const gdriveConnected = useGoogleDriveStore((s) => s.isConnected);
+    const gdriveUser = useGoogleDriveStore((s) => s.user);
+    const gdriveLoading = useGoogleDriveStore((s) => s.isLoading);
+    const setGDriveConnected = useGoogleDriveStore((s) => s.setConnected);
+    const setGDriveLoading = useGoogleDriveStore((s) => s.setLoading);
+    const disconnectGDrive = useGoogleDriveStore((s) => s.disconnect);
+
+    // Check connections when sync tab is active
+    const checkConnections = useCallback(async () => {
+        // Check GitHub
+        if (!githubConnected) {
+            setGitHubLoading(true);
+            try {
+                const status = await checkGitHubConnection();
+                if (status.connected && status.user) {
+                    setGitHubConnected(true, {
+                        id: 0,
+                        login: status.user.login,
+                        name: status.user.name,
+                        avatarUrl: status.user.avatar,
+                        email: null
+                    });
+                }
+            } finally {
+                setGitHubLoading(false);
+            }
+        }
+
+        // Check Google Drive
+        if (!gdriveConnected) {
+            setGDriveLoading(true);
+            try {
+                const status = await checkGDriveConnection();
+                if (status.connected && status.user) {
+                    setGDriveConnected(true, status.user);
+                }
+            } finally {
+                setGDriveLoading(false);
+            }
+        }
+    }, [githubConnected, gdriveConnected, setGitHubConnected, setGitHubLoading, setGDriveConnected, setGDriveLoading]);
+
+    // Check connections when modal opens on sync tab
+    useEffect(() => {
+        if (isOpen && activeTab === 'sync') {
+            checkConnections();
+        }
+    }, [isOpen, activeTab, checkConnections]);
 
     const settings = useSettingsStore();
     const {
@@ -215,6 +278,106 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 {/* Sync Tab */}
                 {activeTab === 'sync' && (
                     <>
+                        {/* Connected Services Section */}
+                        <div className="mb-6">
+                            <h3 className="text-sm font-semibold text-text-primary mb-3">{t('settings.sync.connectedServices')}</h3>
+                            <div className="space-y-3">
+                                {/* GitHub Connection */}
+                                <div
+                                    className={cn(
+                                        'flex items-center justify-between p-3 rounded-lg',
+                                        'bg-bg-secondary border border-border'
+                                    )}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className={cn(
+                                                'w-8 h-8 rounded-full flex items-center justify-center',
+                                                githubConnected ? 'bg-[#24292e]' : 'bg-bg-tertiary'
+                                            )}
+                                        >
+                                            <Github className="h-4 w-4 text-white" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-medium text-text-primary">GitHub</div>
+                                            {githubConnected && githubUser ? (
+                                                <div className="text-xs text-text-muted">@{githubUser.login}</div>
+                                            ) : (
+                                                <div className="text-xs text-text-muted">{t('settings.sync.notConnected')}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {githubLoading ? (
+                                        <Loader2 className="h-4 w-4 animate-spin text-text-muted" />
+                                    ) : githubConnected ? (
+                                        <button
+                                            type="button"
+                                            onClick={disconnectGitHub}
+                                            className={cn(
+                                                'flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md',
+                                                'text-red-500 hover:bg-red-500/10',
+                                                'transition-colors'
+                                            )}
+                                        >
+                                            <Unplug className="h-3.5 w-3.5" />
+                                            {t('settings.sync.disconnect')}
+                                        </button>
+                                    ) : (
+                                        <span className="text-xs text-text-muted px-2.5 py-1.5">{t('settings.sync.signInToConnect')}</span>
+                                    )}
+                                </div>
+
+                                {/* Google Drive Connection */}
+                                <div
+                                    className={cn(
+                                        'flex items-center justify-between p-3 rounded-lg',
+                                        'bg-bg-secondary border border-border'
+                                    )}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className={cn(
+                                                'w-8 h-8 rounded-full flex items-center justify-center',
+                                                gdriveConnected ? 'bg-[#4285f4]' : 'bg-bg-tertiary'
+                                            )}
+                                        >
+                                            <HardDrive className="h-4 w-4 text-white" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-medium text-text-primary">Google Drive</div>
+                                            {gdriveConnected && gdriveUser ? (
+                                                <div className="text-xs text-text-muted">{gdriveUser.email}</div>
+                                            ) : (
+                                                <div className="text-xs text-text-muted">{t('settings.sync.notConnected')}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {gdriveLoading ? (
+                                        <Loader2 className="h-4 w-4 animate-spin text-text-muted" />
+                                    ) : gdriveConnected ? (
+                                        <button
+                                            type="button"
+                                            onClick={disconnectGDrive}
+                                            className={cn(
+                                                'flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md',
+                                                'text-red-500 hover:bg-red-500/10',
+                                                'transition-colors'
+                                            )}
+                                        >
+                                            <Unplug className="h-3.5 w-3.5" />
+                                            {t('settings.sync.disconnect')}
+                                        </button>
+                                    ) : (
+                                        <span className="text-xs text-text-muted px-2.5 py-1.5">{t('settings.sync.signInToConnect')}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="border-t border-border my-4" />
+
+                        {/* Cloud Sync Settings */}
                         <SettingGroup title={t('settings.sync.enabled')} description={t('settings.sync.enabledDesc')}>
                             <Toggle checked={cloudSyncEnabled} onChange={(v) => updateSetting('cloudSyncEnabled', v)} />
                         </SettingGroup>
