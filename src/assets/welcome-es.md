@@ -7,12 +7,13 @@
 ## Tabla de Contenidos
 
 1. [Primeros Pasos](#primeros-pasos)
-2. [Sintaxis Markdown](#sintaxis-markdown)
-3. [Funciones Avanzadas](#funciones-avanzadas)
-4. [Opciones de Exportacion](#opciones-de-exportacion)
-5. [Modos de Vista](#modos-de-vista)
-6. [Atajos de Teclado](#atajos-de-teclado)
-7. [Configuracion y Personalizacion](#configuracion-y-personalizacion)
+2. [Integracion con la Nube](#integracion-con-la-nube)
+3. [Sintaxis Markdown](#sintaxis-markdown)
+4. [Funciones Avanzadas](#funciones-avanzadas)
+5. [Opciones de Exportacion](#opciones-de-exportacion)
+6. [Modos de Vista](#modos-de-vista)
+7. [Atajos de Teclado](#atajos-de-teclado)
+8. [Configuracion y Personalizacion](#configuracion-y-personalizacion)
 
 ---
 
@@ -20,15 +21,60 @@
 
 ### Creando Documentos
 
-- **Nuevo Documento**: `Ctrl+N` o **Archivo > Nuevo**
+- **Nuevo Documento**: `Ctrl+N` o **Archivo > Nuevo**. El nombre del documento entrara automaticamente en modo edicion con "Sin titulo" seleccionado, y se agregara un encabezado con el nombre elegido.
 - **Importar Archivos**: Arrastra y suelta archivos `.md` o usa **Archivo > Importar**
 - **Multiples Pestanas**: Trabaja con varios documentos a la vez
+- **Desde la Nube**: Abre archivos directamente desde GitHub o Google Drive via la barra lateral
 
 ### Guardando tu Trabajo
 
-- **Auto-guardado**: Tus cambios se guardan automaticamente
-- **Guardar Manual**: `Ctrl+S` o **Archivo > Guardar**
+- **Auto-guardado**: Tus cambios se guardan automaticamente en local
+- **Auto-guardado en la Nube**: Los archivos de Google Drive se guardan automaticamente despues de 30 segundos de inactividad
+- **Guardar Manual**: `Ctrl+S` guarda en almacenamiento local, o en la nube (GitHub/Google Drive) segun el origen del documento
 - **Historial de Versiones**: Accede a versiones anteriores haciendo **clic derecho en la pestana**
+
+### Administrando Documentos
+
+- **Menu Contextual**: Clic derecho en archivos para opciones: Renombrar, Duplicar, Exportar, Eliminar
+- **Eliminar de la Nube**: Al eliminar archivos de la nube, elige si solo remover localmente o tambien eliminar de la nube
+- **Renombrar**: Doble clic en la pestana o presiona `F2` para renombrar
+
+---
+
+## Integracion con la Nube
+
+### GitHub
+
+Conecta tu cuenta de GitHub para trabajar con tus repositorios directamente:
+
+1. Ve a **Configuracion > Sincronizacion** y haz clic en **Conectar GitHub**
+2. Autoriza a MarkView para acceder a tus repositorios
+3. Explora tus repos en la seccion **GitHub** de la barra lateral
+4. Abre, edita y guarda archivos markdown
+5. Crea nuevos archivos con el boton **Nuevo Archivo**
+6. Confirma cambios con mensajes de commit personalizados
+7. Elimina archivos de los repositorios
+
+### Google Drive
+
+Sincroniza tus documentos con Google Drive:
+
+1. Ve a **Configuracion > Sincronizacion** y haz clic en **Conectar Google Drive**
+2. Autoriza a MarkView para acceder a tu Drive
+3. Explora tus archivos en la seccion **Google Drive** de la barra lateral
+4. Abre y edita archivos markdown
+5. Crea nuevos archivos en cualquier carpeta (tambien puedes crear nuevas carpetas)
+6. **Auto-guardado**: Los cambios se guardan automaticamente en Drive despues de 30 segundos
+7. **Guardado manual**: Presiona `Ctrl+S` para guardar inmediatamente
+8. **Estado de Sincronizacion**: Ve el estado en la barra de estado (Guardado, Sincronizando, Pendiente)
+
+### Eliminando Documentos de la Nube
+
+Cuando eliminas un documento de GitHub o Google Drive:
+
+1. Un dialogo te preguntara que deseas hacer
+2. **Solo remover de la lista**: Remueve el archivo de MarkView pero lo mantiene en la nube
+3. **Tambien eliminar de la nube**: Elimina permanentemente el archivo de GitHub/Google Drive
 
 ---
 
@@ -379,9 +425,27 @@ Accede a la configuracion via `Ctrl+,` o **Archivo > Configuracion**:
 
 Administra todos tus documentos abiertos. Clic derecho para opciones:
 - Renombrar
-- Cerrar
-- Cerrar Otros
-- Cerrar Todos
+- Duplicar
+- Exportar Como (Markdown, HTML, Texto Plano)
+- Eliminar
+
+### Explorador de GitHub
+
+Explora tus repositorios de GitHub:
+- Selecciona repositorio y rama
+- Navega por la estructura de carpetas
+- Abre archivos markdown
+- Crea nuevos archivos
+- Elimina archivos (con commit)
+
+### Explorador de Google Drive
+
+Accede a tus archivos de Google Drive:
+- Explora carpetas
+- Abre archivos markdown
+- Crea nuevos archivos (con seleccion de carpeta)
+- Crea nuevas carpetas
+- Elimina archivos
 
 ### Tabla de Contenidos
 

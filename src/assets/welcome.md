@@ -7,12 +7,13 @@
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
-2. [Markdown Syntax](#markdown-syntax)
-3. [Advanced Features](#advanced-features)
-4. [Export Options](#export-options)
-5. [View Modes](#view-modes)
-6. [Keyboard Shortcuts](#keyboard-shortcuts)
-7. [Settings & Customization](#settings--customization)
+2. [Cloud Integration](#cloud-integration)
+3. [Markdown Syntax](#markdown-syntax)
+4. [Advanced Features](#advanced-features)
+5. [Export Options](#export-options)
+6. [View Modes](#view-modes)
+7. [Keyboard Shortcuts](#keyboard-shortcuts)
+8. [Settings & Customization](#settings--customization)
 
 ---
 
@@ -20,15 +21,60 @@
 
 ### Creating Documents
 
-- **New Document**: `Ctrl+N` or **File > New**
+- **New Document**: `Ctrl+N` or **File > New**. The document name will automatically enter edit mode with "Untitled" selected, and a heading will be added with your chosen name.
 - **Import Files**: Drag & drop `.md` files or use **File > Import**
 - **Multiple Tabs**: Work with several documents at once
+- **From Cloud**: Open files directly from GitHub or Google Drive via the sidebar
 
 ### Saving Your Work
 
-- **Auto-save**: Your changes are automatically saved
-- **Manual Save**: `Ctrl+S` or **File > Save**
+- **Auto-save**: Your changes are automatically saved locally
+- **Cloud Auto-save**: Google Drive files auto-save after 30 seconds of inactivity
+- **Manual Save**: `Ctrl+S` saves to local storage, or to the cloud (GitHub/Google Drive) depending on document source
 - **Version History**: Access previous versions via **right-click on tab**
+
+### Managing Documents
+
+- **Context Menu**: Right-click on files for options: Rename, Duplicate, Export, Delete
+- **Cloud Delete**: When deleting cloud files, choose to remove locally only or also delete from the cloud
+- **Rename**: Double-click on tab or press `F2` to rename
+
+---
+
+## Cloud Integration
+
+### GitHub
+
+Connect your GitHub account to work with your repositories directly:
+
+1. Go to **Settings > Sync** and click **Connect GitHub**
+2. Authorize MarkView to access your repositories
+3. Browse your repos in the **GitHub** section of the sidebar
+4. Open, edit, and save markdown files
+5. Create new files with **New File** button
+6. Commit changes with custom commit messages
+7. Delete files from repositories
+
+### Google Drive
+
+Sync your documents with Google Drive:
+
+1. Go to **Settings > Sync** and click **Connect Google Drive**
+2. Authorize MarkView to access your Drive
+3. Browse your files in the **Google Drive** section of the sidebar
+4. Open and edit markdown files
+5. Create new files in any folder (you can also create new folders)
+6. **Auto-save**: Changes are automatically saved to Drive after 30 seconds
+7. **Manual save**: Press `Ctrl+S` to save immediately
+8. **Sync Status**: See the sync status in the status bar (Saved, Syncing, Pending)
+
+### Deleting Cloud Documents
+
+When you delete a document from GitHub or Google Drive:
+
+1. A dialog will ask what you want to do
+2. **Remove from list only**: Removes the file from MarkView but keeps it in the cloud
+3. **Also delete from cloud**: Permanently deletes the file from GitHub/Google Drive
 
 ---
 
@@ -379,9 +425,27 @@ Access settings via `Ctrl+,` or **File > Settings**:
 
 Manage all your open documents. Right-click for options:
 - Rename
-- Close
-- Close Others
-- Close All
+- Duplicate
+- Export As (Markdown, HTML, Plain Text)
+- Delete
+
+### GitHub Explorer
+
+Browse your GitHub repositories:
+- Select repository and branch
+- Navigate folder structure
+- Open markdown files
+- Create new files
+- Delete files (with commit)
+
+### Google Drive Explorer
+
+Access your Google Drive files:
+- Browse folders
+- Open markdown files
+- Create new files (with folder selection)
+- Create new folders
+- Delete files
 
 ### Table of Contents
 
