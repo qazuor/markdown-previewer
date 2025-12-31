@@ -1,6 +1,8 @@
-export type SidebarSection = 'explorer' | 'toc' | 'search';
+export type SidebarSection = 'explorer' | 'github' | 'gdrive';
 
-export type ModalType = 'settings' | 'shortcuts' | 'onboarding' | 'versions' | 'export' | null;
+export type DocumentPanelType = 'toc' | 'search' | null;
+
+export type ModalType = 'settings' | 'shortcuts' | 'onboarding' | 'versions' | 'export' | 'about' | null;
 
 export type SaveStatus = 'saved' | 'saving' | 'modified' | 'error';
 
@@ -21,6 +23,9 @@ export interface UIState {
     viewMode: ViewMode;
     zenMode: boolean;
 
+    // Document panel (TOC/Search floating over preview)
+    activeDocumentPanel: DocumentPanelType;
+
     // Modals
     activeModal: ModalType;
 
@@ -34,4 +39,7 @@ export interface UIState {
     // Status
     saveStatus: SaveStatus;
     lastSavedAt: Date | null;
+
+    // Document renaming
+    pendingRenameDocumentId: string | null;
 }

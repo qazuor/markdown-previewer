@@ -1,4 +1,4 @@
-import type { ModalType, SaveStatus, SearchResult, SidebarSection, UIState, ViewMode } from '@/types/ui';
+import type { DocumentPanelType, ModalType, SaveStatus, SearchResult, SidebarSection, UIState, ViewMode } from '@/types/ui';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
@@ -20,6 +20,10 @@ interface UIActions {
     toggleZenMode: () => void;
     setZenMode: (enabled: boolean) => void;
 
+    // Document panel (TOC/Search)
+    setDocumentPanel: (panel: DocumentPanelType) => void;
+    toggleDocumentPanel: (panel: 'toc' | 'search') => void;
+
     // Search
     setSearchQuery: (query: string) => void;
     setSearchResults: (results: SearchResult[]) => void;
@@ -31,6 +35,9 @@ interface UIActions {
     // Status
     setSaveStatus: (status: SaveStatus) => void;
     setLastSavedAt: (date: Date | null) => void;
+
+    // Document renaming
+    setPendingRenameDocumentId: (id: string | null) => void;
 }
 
 type UIStore = UIState & UIActions;
@@ -41,6 +48,7 @@ const initialState: UIState = {
     sidebarWidth: 280,
     viewMode: 'split',
     zenMode: false,
+    activeDocumentPanel: null,
     activeModal: null,
     searchQuery: '',
     searchResults: [],
@@ -48,7 +56,8 @@ const initialState: UIState = {
     searchCaseSensitive: false,
     searchRegex: false,
     saveStatus: 'saved',
-    lastSavedAt: null
+    lastSavedAt: null,
+    pendingRenameDocumentId: null
 };
 
 export const useUIStore = create<UIStore>()(
@@ -93,6 +102,16 @@ export const useUIStore = create<UIStore>()(
                     set({ zenMode: enabled });
                 },
 
+                setDocumentPanel: (panel) => {
+                    set({ activeDocumentPanel: panel });
+                },
+
+                toggleDocumentPanel: (panel) => {
+                    set((state) => ({
+                        activeDocumentPanel: state.activeDocumentPanel === panel ? null : panel
+                    }));
+                },
+
                 setSearchQuery: (query) => {
                     set({ searchQuery: query });
                 },
@@ -127,6 +146,10 @@ export const useUIStore = create<UIStore>()(
 
                 setLastSavedAt: (date) => {
                     set({ lastSavedAt: date });
+                },
+
+                setPendingRenameDocumentId: (id) => {
+                    set({ pendingRenameDocumentId: id });
                 }
             }),
             {
