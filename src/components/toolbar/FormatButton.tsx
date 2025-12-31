@@ -26,12 +26,12 @@ export function FormatButton({ icon: Icon, label, shortcut, onClick, active = fa
                 className={cn(
                     'inline-flex items-center justify-center',
                     'h-8 w-8 rounded-md',
-                    'text-text-secondary hover:text-text-primary',
-                    'hover:bg-bg-tertiary',
+                    'text-slate-700 dark:text-text-secondary hover:text-slate-900 dark:hover:text-text-primary',
+                    'hover:bg-slate-400/50 dark:hover:bg-bg-tertiary',
                     'transition-colors duration-150',
                     'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
                     'disabled:pointer-events-none disabled:opacity-50',
-                    active && 'bg-bg-tertiary text-primary-500',
+                    active && 'bg-slate-400/50 dark:bg-bg-tertiary text-primary-600 dark:text-primary-500',
                     className
                 )}
                 aria-label={label}
@@ -59,5 +59,5 @@ export function FormatButtonGroup({ children, className }: FormatButtonGroupProp
  * Separator between button groups
  */
 export function ToolbarSeparator() {
-    return <div className="mx-1.5 h-6 w-px bg-border" aria-hidden="true" />;
+    return <div className="mx-1.5 h-6 w-px bg-slate-400 dark:bg-border" aria-hidden="true" />;
 }
