@@ -32,10 +32,10 @@ export function Modal({ isOpen, onClose, title, description, children, size = 'm
     return (
         <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200" />
+                <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200" />
                 <Dialog.Content
                     className={cn(
-                        'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+                        'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
                         'w-full max-h-[85vh] overflow-auto',
                         sizeClasses[size],
                         'bg-bg-primary rounded-lg shadow-xl',

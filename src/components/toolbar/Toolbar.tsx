@@ -1,7 +1,8 @@
 import { useMobile } from '@/hooks';
+import { useUIStore } from '@/stores/uiStore';
 import { cn } from '@/utils/cn';
 import type { EditorView } from '@codemirror/view';
-import { ChevronDown, MoreHorizontal, X } from 'lucide-react';
+import { ChevronDown, List, MoreHorizontal, Search, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmojiPicker } from './EmojiPicker';
@@ -153,6 +154,10 @@ export function Toolbar({ editorView, className }: ToolbarProps) {
         editorView
     });
 
+    // Document panel state
+    const activeDocumentPanel = useUIStore((state) => state.activeDocumentPanel);
+    const toggleDocumentPanel = useUIStore((state) => state.toggleDocumentPanel);
+
     const closeMore = () => setMoreOpen(false);
 
     // Mobile toolbar - frequent actions + expandable bottom sheet
@@ -161,7 +166,11 @@ export function Toolbar({ editorView, className }: ToolbarProps) {
             <>
                 <div
                     data-tour="toolbar"
-                    className={cn('flex items-center gap-1 px-2 py-1.5', 'bg-bg-tertiary border-b border-border', className)}
+                    className={cn(
+                        'flex items-center gap-1 px-2 py-1.5',
+                        'bg-slate-300 dark:bg-bg-tertiary border-b border-slate-400 dark:border-border',
+                        className
+                    )}
                     role="toolbar"
                     aria-label={t('aria.formattingToolbar')}
                 >
@@ -310,7 +319,7 @@ export function Toolbar({ editorView, className }: ToolbarProps) {
             data-tour="toolbar"
             className={cn(
                 'flex items-center gap-1 px-2 py-1.5',
-                'bg-bg-tertiary border-b border-border',
+                'bg-slate-300 dark:bg-bg-tertiary border-b border-slate-400 dark:border-border',
                 'overflow-x-auto scrollbar-thin',
                 className
             )}
@@ -366,6 +375,45 @@ export function Toolbar({ editorView, className }: ToolbarProps) {
 
             {/* Emoji */}
             <EmojiPicker onEmojiSelect={handleEmojiInsert} />
+
+            {/* Spacer to push document tools to the right */}
+            <div className="flex-1" />
+
+            <ToolbarSeparator />
+
+            {/* Document navigation tools */}
+            <FormatButtonGroup>
+                <button
+                    type="button"
+                    onClick={() => toggleDocumentPanel('toc')}
+                    className={cn(
+                        'flex items-center justify-center p-1.5 rounded',
+                        'text-slate-700 dark:text-text-secondary hover:text-slate-900 dark:hover:text-text-primary',
+                        'hover:bg-slate-400/50 dark:hover:bg-bg-hover',
+                        'transition-colors',
+                        activeDocumentPanel === 'toc' && 'bg-slate-400/50 dark:bg-bg-hover text-primary-600 dark:text-primary-500'
+                    )}
+                    title={t('sidebar.toc')}
+                    aria-pressed={activeDocumentPanel === 'toc'}
+                >
+                    <List className="h-4 w-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => toggleDocumentPanel('search')}
+                    className={cn(
+                        'flex items-center justify-center p-1.5 rounded',
+                        'text-slate-700 dark:text-text-secondary hover:text-slate-900 dark:hover:text-text-primary',
+                        'hover:bg-slate-400/50 dark:hover:bg-bg-hover',
+                        'transition-colors',
+                        activeDocumentPanel === 'search' && 'bg-slate-400/50 dark:bg-bg-hover text-primary-600 dark:text-primary-500'
+                    )}
+                    title={t('sidebar.search')}
+                    aria-pressed={activeDocumentPanel === 'search'}
+                >
+                    <Search className="h-4 w-4" />
+                </button>
+            </FormatButtonGroup>
         </div>
     );
 }
