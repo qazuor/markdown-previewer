@@ -176,7 +176,9 @@
         "pdf": "PDF",
         "png": "Imagen PNG",
         "jpeg": "Imagen JPEG",
-        "image": "Imagen"
+        "image": "Imagen",
+        "generating": "Generando {{format}}...",
+        "pleaseWait": "Esto puede tardar unos segundos"
     },
     "preview": {
         "title": "Vista Previa",

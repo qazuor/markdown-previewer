@@ -17,6 +17,7 @@ export {
     ContextMenuTrigger
 } from './ContextMenu';
 export { DropOverlay } from './DropOverlay';
+export { ExportOverlay } from './ExportOverlay';
 export {
     DropdownMenu,
     DropdownMenuCheckboxItem,
