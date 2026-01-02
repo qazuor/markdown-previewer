@@ -45,7 +45,7 @@ describe('createMarkdownKeymap', () => {
     });
 
     it('should include formatting keybindings', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: { key: string }[] };
         const keys = extension.bindings.map((b) => b.key);
 
         expect(keys).toContain('Mod-b'); // Bold
@@ -54,7 +54,7 @@ describe('createMarkdownKeymap', () => {
     });
 
     it('should include heading keybindings', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: { key: string }[] };
         const keys = extension.bindings.map((b) => b.key);
 
         expect(keys).toContain('Mod-1'); // H1
@@ -66,7 +66,7 @@ describe('createMarkdownKeymap', () => {
     });
 
     it('should include link and image keybindings', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: { key: string }[] };
         const keys = extension.bindings.map((b) => b.key);
 
         expect(keys).toContain('Mod-k'); // Link
@@ -74,7 +74,7 @@ describe('createMarkdownKeymap', () => {
     });
 
     it('should include code keybindings', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: { key: string }[] };
         const keys = extension.bindings.map((b) => b.key);
 
         expect(keys).toContain('Mod-`'); // Inline code
@@ -82,7 +82,7 @@ describe('createMarkdownKeymap', () => {
     });
 
     it('should include list keybindings', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: { key: string }[] };
         const keys = extension.bindings.map((b) => b.key);
 
         expect(keys).toContain('Mod-Shift-q'); // Quote
@@ -92,21 +92,21 @@ describe('createMarkdownKeymap', () => {
     });
 
     it('should include horizontal rule keybinding', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: { key: string }[] };
         const keys = extension.bindings.map((b) => b.key);
 
         expect(keys).toContain('Mod-Shift-h');
     });
 
     it('should include indentWithTab', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: { key: string }[] };
         const hasTab = extension.bindings.some((b) => b.key === 'Tab');
 
         expect(hasTab).toBe(true);
     });
 
     it('should have correct number of keybindings', () => {
-        const extension = createMarkdownKeymap() as { type: string; bindings: unknown[] };
+        const extension = createMarkdownKeymap() as unknown as { type: string; bindings: unknown[] };
 
         // 3 formatting + 6 headings + 2 link/image + 2 code + 4 lists + 1 hr + 1 tab = 19
         expect(extension.bindings.length).toBe(19);
@@ -122,7 +122,7 @@ describe('createDefaultKeymap', () => {
     });
 
     it('should include default keybindings', () => {
-        const extension = createDefaultKeymap() as { type: string; bindings: { key: string }[] };
+        const extension = createDefaultKeymap() as unknown as { type: string; bindings: { key: string }[] };
 
         expect(extension.bindings.length).toBeGreaterThan(0);
     });

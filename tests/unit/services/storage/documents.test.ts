@@ -64,7 +64,6 @@ describe('documents storage', () => {
 
             const stored = localStorage.getItem('markview:doc:my-doc');
             expect(stored).toBeTruthy();
-            // biome-ignore lint/style/noNonNullAssertion: Asserted above
             const parsed = JSON.parse(stored!);
             expect(parsed.id).toBe('my-doc');
             expect(parsed.content).toBe('# Hello World');
@@ -100,7 +99,6 @@ describe('documents storage', () => {
             const loaded = loadDocument(doc.id);
             expect(loaded).not.toBeNull();
             const after = Date.now();
-            // biome-ignore lint/style/noNonNullAssertion: Asserted above
             const updatedAt = new Date(loaded!.updatedAt).getTime();
             expect(updatedAt).toBeGreaterThanOrEqual(before);
             expect(updatedAt).toBeLessThanOrEqual(after);

@@ -50,13 +50,13 @@ describe('useTabs', () => {
         it('should include tab name from document', () => {
             const { result } = renderHook(() => useTabs());
 
-            expect(result.current.tabs[0].name).toBe('Document 1.md');
+            expect(result.current.tabs[0]!.name).toBe('Document 1.md');
         });
 
         it('should include sync status from document', () => {
             const { result } = renderHook(() => useTabs());
 
-            expect(result.current.tabs[0].syncStatus).toBe('local');
+            expect(result.current.tabs[0]!.syncStatus).toBe('local');
         });
 
         it('should return tabCount', () => {
@@ -90,7 +90,7 @@ describe('useTabs', () => {
         it('should close tab without confirmation for local files', () => {
             const { result } = renderHook(() => useTabs());
 
-            let closeResult: ReturnType<typeof result.current.closeTab> = { requiresConfirmation: false };
+            let closeResult: ReturnType<typeof result.current.closeTab> = { requiresConfirmation: false, document: undefined };
             act(() => {
                 closeResult = result.current.closeTab('doc-1');
             });
@@ -102,7 +102,7 @@ describe('useTabs', () => {
         it('should close tab without confirmation for synced files', () => {
             const { result } = renderHook(() => useTabs());
 
-            let closeResult: ReturnType<typeof result.current.closeTab> = { requiresConfirmation: false };
+            let closeResult: ReturnType<typeof result.current.closeTab> = { requiresConfirmation: false, document: undefined };
             act(() => {
                 closeResult = result.current.closeTab('doc-2');
             });
@@ -114,7 +114,7 @@ describe('useTabs', () => {
         it('should require confirmation for modified files', () => {
             const { result } = renderHook(() => useTabs());
 
-            let closeResult: ReturnType<typeof result.current.closeTab> = { requiresConfirmation: false };
+            let closeResult: ReturnType<typeof result.current.closeTab> = { requiresConfirmation: false, document: undefined };
             act(() => {
                 closeResult = result.current.closeTab('doc-3');
             });

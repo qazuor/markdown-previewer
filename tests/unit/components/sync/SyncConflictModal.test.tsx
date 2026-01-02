@@ -56,7 +56,7 @@ vi.mock('lucide-react', () => ({
 }));
 
 // Store mocks
-const mockActiveConflict = vi.fn<[], unknown>().mockReturnValue(null);
+const mockActiveConflict = vi.fn<() => unknown>().mockReturnValue(null);
 const mockSetActiveConflict = vi.fn();
 
 vi.mock('@/stores/syncStore', () => ({

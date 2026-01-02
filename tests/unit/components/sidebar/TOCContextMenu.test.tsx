@@ -155,7 +155,6 @@ describe('TOCContextMenu', () => {
 
             const items = screen.getAllByTestId('context-item');
             expect(items[0]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[0]!); // Go to section
 
             expect(mockOnNavigate).toHaveBeenCalledWith(10);
@@ -172,7 +171,6 @@ describe('TOCContextMenu', () => {
 
             const items = screen.getAllByTestId('context-item');
             expect(items[0]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[0]!);
 
             expect(mockOnNavigate).toHaveBeenCalledWith(42);
@@ -191,7 +189,6 @@ describe('TOCContextMenu', () => {
 
             const items = screen.getAllByTestId('context-item');
             expect(items[1]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[1]!); // Copy section link
 
             expect(mockWriteText).toHaveBeenCalledWith('#introduction');
@@ -208,7 +205,6 @@ describe('TOCContextMenu', () => {
 
             const items = screen.getAllByTestId('context-item');
             expect(items[1]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[1]!);
 
             expect(mockWriteText).toHaveBeenCalledWith('#my-section');
@@ -227,7 +223,6 @@ describe('TOCContextMenu', () => {
 
             const items = screen.getAllByTestId('context-item');
             expect(items[2]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[2]!); // Copy section text
 
             expect(mockWriteText).toHaveBeenCalledWith('Introduction');
@@ -244,7 +239,6 @@ describe('TOCContextMenu', () => {
 
             const items = screen.getAllByTestId('context-item');
             expect(items[2]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[2]!);
 
             expect(mockWriteText).toHaveBeenCalledWith('Getting Started');

@@ -74,7 +74,7 @@ describe('rateLimit middleware', () => {
 
             // Third request should be rate limited
             const ctx = createMockContext({ headers: { 'x-forwarded-for': ip } });
-            const result = await middleware(ctx, mockNext);
+            await middleware(ctx, mockNext);
 
             expect(ctx.header).toHaveBeenCalledWith('Retry-After', expect.any(String));
             expect(ctx.json).toHaveBeenCalledWith(

@@ -1,6 +1,6 @@
 import { GitHubExplorer } from '@/components/sidebar/GitHubExplorer';
 import type { FileTreeNode, Repository } from '@/types/github';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock react-i18next
@@ -25,7 +25,7 @@ vi.mock('@/services/github', () => ({
     fetchFileTree: (...args: unknown[]) => mockFetchFileTree(...args),
     fetchFileContent: (...args: unknown[]) => mockFetchFileContent(...args),
     filterMarkdownOnly: (nodes: FileTreeNode[]) => mockFilterMarkdownOnly(nodes),
-    filterRepositories: (repos: Repository[], options: unknown) => mockFilterRepositories(repos)
+    filterRepositories: (repos: Repository[], _options: unknown) => mockFilterRepositories(repos)
 }));
 
 // Mock parseRepoFullName
@@ -75,7 +75,6 @@ vi.mock('@/components/sidebar/GitHubContextMenus', () => ({
     GitHubEmptyContextMenu: ({ children }: { children: React.ReactNode }) => <div data-testid="empty-context-menu">{children}</div>,
     GitHubFileContextMenu: ({
         children,
-        onOpen,
         onDelete,
         node
     }: { children: React.ReactNode; onOpen: (node: FileTreeNode) => void; onDelete: (node: FileTreeNode) => void; node: FileTreeNode }) => (
@@ -105,13 +104,13 @@ vi.mock('lucide-react', () => ({
 }));
 
 // Store mocks
-const mockIsConnected = vi.fn<[], boolean>().mockReturnValue(false);
-const mockIsLoading = vi.fn<[], boolean>().mockReturnValue(false);
-const mockError = vi.fn<[], string | null>().mockReturnValue(null);
-const mockUser = vi.fn<[], { login: string; avatarUrl: string } | null>().mockReturnValue(null);
-const mockRepositories = vi.fn<[], Repository[]>().mockReturnValue([]);
-const mockSelectedRepo = vi.fn<[], Repository | null>().mockReturnValue(null);
-const mockReposLoading = vi.fn<[], boolean>().mockReturnValue(false);
+const mockIsConnected = vi.fn<() => boolean>().mockReturnValue(false);
+const mockIsLoading = vi.fn<() => boolean>().mockReturnValue(false);
+const mockError = vi.fn<() => string | null>().mockReturnValue(null);
+const mockUser = vi.fn<() => { login: string; avatarUrl: string } | null>().mockReturnValue(null);
+const mockRepositories = vi.fn<() => Repository[]>().mockReturnValue([]);
+const mockSelectedRepo = vi.fn<() => Repository | null>().mockReturnValue(null);
+const mockReposLoading = vi.fn<() => boolean>().mockReturnValue(false);
 const mockSetConnected = vi.fn();
 const mockSetLoading = vi.fn();
 const mockSetError = vi.fn();
@@ -120,7 +119,7 @@ const mockSetReposLoading = vi.fn();
 const mockSelectRepo = vi.fn();
 const mockSetFileTree = vi.fn();
 const mockFileTree = new Map<string, FileTreeNode[]>();
-const mockTreeLoading = vi.fn<[], boolean>().mockReturnValue(false);
+const mockTreeLoading = vi.fn<() => boolean>().mockReturnValue(false);
 const mockExpandedPaths = new Set<string>();
 const mockSetTreeLoading = vi.fn();
 const mockToggleExpanded = vi.fn();
@@ -170,9 +169,8 @@ const mockRepo: Repository = {
     defaultBranch: 'main',
     description: 'Test repository',
     language: 'TypeScript',
-    stargazersCount: 10,
-    forksCount: 5,
-    updatedAt: '2024-01-01T00:00:00Z'
+    updatedAt: '2024-01-01T00:00:00Z',
+    owner: { login: 'user', avatarUrl: 'https://example.com/avatar.png' }
 };
 
 const mockPrivateRepo: Repository = {
@@ -565,7 +563,7 @@ describe('GitHubExplorer', () => {
 
             // Trigger delete through context menu mock - get the last one (README.md)
             const fileContextMenus = screen.getAllByTestId('file-context-menu');
-            const lastMenu = fileContextMenus[fileContextMenus.length - 1];
+            const lastMenu = fileContextMenus[fileContextMenus.length - 1]!;
             fireEvent.click(lastMenu);
 
             expect(screen.getByTestId('delete-file-modal')).toBeInTheDocument();
@@ -575,7 +573,7 @@ describe('GitHubExplorer', () => {
             render(<GitHubExplorer />);
 
             const fileContextMenus = screen.getAllByTestId('file-context-menu');
-            const lastMenu = fileContextMenus[fileContextMenus.length - 1];
+            const lastMenu = fileContextMenus[fileContextMenus.length - 1]!;
             fireEvent.click(lastMenu);
 
             fireEvent.click(screen.getByTestId('close-delete-modal'));
@@ -589,7 +587,7 @@ describe('GitHubExplorer', () => {
             render(<GitHubExplorer />);
 
             const fileContextMenus = screen.getAllByTestId('file-context-menu');
-            const lastMenu = fileContextMenus[fileContextMenus.length - 1];
+            const lastMenu = fileContextMenus[fileContextMenus.length - 1]!;
             fireEvent.click(lastMenu);
 
             fireEvent.click(screen.getByTestId('delete-file-success'));

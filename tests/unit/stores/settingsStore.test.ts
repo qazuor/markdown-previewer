@@ -583,10 +583,10 @@ describe('settingsStore', () => {
                 expect(settings.theme).toBe('dark');
                 expect(settings.autoSave).toBe(false);
                 // Should not include sync state
-                expect((settings as Record<string, unknown>).syncStatus).toBeUndefined();
-                expect((settings as Record<string, unknown>).lastSyncedAt).toBeUndefined();
-                expect((settings as Record<string, unknown>).syncError).toBeUndefined();
-                expect((settings as Record<string, unknown>).pendingChanges).toBeUndefined();
+                expect((settings as unknown as Record<string, unknown>).syncStatus).toBeUndefined();
+                expect((settings as unknown as Record<string, unknown>).lastSyncedAt).toBeUndefined();
+                expect((settings as unknown as Record<string, unknown>).syncError).toBeUndefined();
+                expect((settings as unknown as Record<string, unknown>).pendingChanges).toBeUndefined();
             });
 
             it('should include all settings fields', () => {

@@ -35,12 +35,15 @@ describe('useGoogleDriveSave', () => {
         content: '# Test',
         source: 'gdrive',
         syncStatus: 'synced',
-        createdAt: '2024-01-01T00:00:00Z',
-        modifiedAt: '2024-01-01T00:00:00Z',
+        createdAt: new Date('2024-01-01T00:00:00Z'),
+        updatedAt: new Date('2024-01-01T00:00:00Z'),
+        cursor: { line: 1, column: 1 },
+        scroll: { line: 0, percentage: 0 },
+        isManuallyNamed: false,
         driveInfo: {
             fileId: 'file123',
-            mimeType: 'text/markdown',
-            parentId: 'folder456'
+            name: 'test.md',
+            mimeType: 'text/markdown'
         },
         ...overrides
     });

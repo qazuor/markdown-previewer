@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 // Use vi.hoisted to create mocks that can be used in vi.mock
 const { mockInit, mockUse, mockI18n } = vi.hoisted(() => {

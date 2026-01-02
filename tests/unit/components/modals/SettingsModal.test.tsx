@@ -272,7 +272,7 @@ describe('SettingsModal', () => {
         it('should call updateSetting when theme is changed', () => {
             render(<SettingsModal {...defaultProps} />);
 
-            const themeSelect = screen.getAllByRole('combobox')[0];
+            const themeSelect = screen.getAllByRole('combobox')[0]!;
             fireEvent.change(themeSelect, { target: { value: 'dark' } });
 
             expect(mockUpdateSetting).toHaveBeenCalledWith('theme', 'dark');
@@ -281,7 +281,7 @@ describe('SettingsModal', () => {
         it('should call updateSetting when preview style is changed', () => {
             render(<SettingsModal {...defaultProps} />);
 
-            const previewSelect = screen.getAllByRole('combobox')[1];
+            const previewSelect = screen.getAllByRole('combobox')[1]!;
             fireEvent.change(previewSelect, { target: { value: 'notion' } });
 
             expect(mockUpdateSetting).toHaveBeenCalledWith('previewStyle', 'notion');
@@ -290,7 +290,7 @@ describe('SettingsModal', () => {
         it('should call updateSetting when font family is changed', () => {
             render(<SettingsModal {...defaultProps} />);
 
-            const fontSelect = screen.getAllByRole('combobox')[2];
+            const fontSelect = screen.getAllByRole('combobox')[2]!;
             fireEvent.change(fontSelect, { target: { value: 'Fira Code' } });
 
             expect(mockUpdateSetting).toHaveBeenCalledWith('fontFamily', 'Fira Code');
@@ -299,7 +299,7 @@ describe('SettingsModal', () => {
         it('should call updateSetting when editor font size is changed', () => {
             render(<SettingsModal {...defaultProps} />);
 
-            const fontSizeInput = screen.getAllByRole('spinbutton')[0];
+            const fontSizeInput = screen.getAllByRole('spinbutton')[0]!;
             fireEvent.change(fontSizeInput, { target: { value: '16' } });
 
             expect(mockUpdateSetting).toHaveBeenCalledWith('editorFontSize', 16);
@@ -313,7 +313,7 @@ describe('SettingsModal', () => {
             fireEvent.click(screen.getByText('settings.tabs.editor'));
 
             const toggles = screen.getAllByRole('switch');
-            fireEvent.click(toggles[0]);
+            fireEvent.click(toggles[0]!);
 
             expect(mockUpdateSetting).toHaveBeenCalledWith('wordWrap', false);
         });
@@ -324,7 +324,7 @@ describe('SettingsModal', () => {
             fireEvent.click(screen.getByText('settings.tabs.behavior'));
 
             const toggles = screen.getAllByRole('switch');
-            fireEvent.click(toggles[0]);
+            fireEvent.click(toggles[0]!);
 
             expect(mockUpdateSetting).toHaveBeenCalledWith('autoSave', false);
         });

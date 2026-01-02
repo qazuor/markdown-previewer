@@ -28,7 +28,7 @@ function createMockView(doc: string, from: number, to: number = from) {
     const lines = doc.split('\n');
     const lineStartPositions: number[] = [0];
     for (let i = 0; i < lines.length - 1; i++) {
-        lineStartPositions.push(lineStartPositions[i] + lines[i].length + 1);
+        lineStartPositions.push(lineStartPositions[i]! + lines[i]!.length + 1);
     }
 
     return {
@@ -43,12 +43,12 @@ function createMockView(doc: string, from: number, to: number = from) {
                         let lineNum = 1;
                         let lineStart = 0;
                         for (let i = 0; i < lineStartPositions.length; i++) {
-                            if (pos >= lineStartPositions[i]) {
+                            if (pos >= lineStartPositions[i]!) {
                                 lineNum = i + 1;
-                                lineStart = lineStartPositions[i];
+                                lineStart = lineStartPositions[i]!;
                             }
                         }
-                        const lineEnd = lineNum < lines.length ? lineStartPositions[lineNum] - 1 : doc.length;
+                        const lineEnd = lineNum < lines.length ? lineStartPositions[lineNum]! - 1 : doc.length;
                         return {
                             from: lineStart,
                             to: lineEnd,

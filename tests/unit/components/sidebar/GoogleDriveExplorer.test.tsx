@@ -89,14 +89,14 @@ vi.mock('lucide-react', () => ({
 }));
 
 // Store mocks
-const mockIsConnected = vi.fn<[], boolean>().mockReturnValue(false);
-const mockIsLoading = vi.fn<[], boolean>().mockReturnValue(false);
-const mockError = vi.fn<[], string | null>().mockReturnValue(null);
-const mockUser = vi.fn<[], { name: string; email: string; picture: string } | null>().mockReturnValue(null);
-const mockFileTree = vi.fn<[], DriveFileTreeNode[]>().mockReturnValue([]);
-const mockTreeLoading = vi.fn<[], boolean>().mockReturnValue(false);
+const mockIsConnected = vi.fn<() => boolean>().mockReturnValue(false);
+const mockIsLoading = vi.fn<() => boolean>().mockReturnValue(false);
+const mockError = vi.fn<() => string | null>().mockReturnValue(null);
+const mockUser = vi.fn<() => { name: string; email: string; picture: string } | null>().mockReturnValue(null);
+const mockFileTree = vi.fn<() => DriveFileTreeNode[]>().mockReturnValue([]);
+const mockTreeLoading = vi.fn<() => boolean>().mockReturnValue(false);
 const mockExpandedPaths = new Set<string>();
-const mockQuota = vi.fn<[], { used: number; limit: number } | null>().mockReturnValue(null);
+const mockQuota = vi.fn<() => { used: number; limit: number } | null>().mockReturnValue(null);
 const mockSetConnected = vi.fn();
 const mockSetLoading = vi.fn();
 const mockSetError = vi.fn();
@@ -144,6 +144,7 @@ const mockFileTreeNodes: DriveFileTreeNode[] = [
         name: 'Documents',
         type: 'folder',
         mimeType: 'application/vnd.google-apps.folder',
+        modifiedTime: '2024-01-01T00:00:00Z',
         isMarkdown: false,
         children: [
             {
@@ -151,6 +152,7 @@ const mockFileTreeNodes: DriveFileTreeNode[] = [
                 name: 'notes.md',
                 type: 'file',
                 mimeType: 'text/markdown',
+                modifiedTime: '2024-01-01T00:00:00Z',
                 isMarkdown: true
             }
         ]
@@ -160,6 +162,7 @@ const mockFileTreeNodes: DriveFileTreeNode[] = [
         name: 'README.md',
         type: 'file',
         mimeType: 'text/markdown',
+        modifiedTime: '2024-01-01T00:00:00Z',
         isMarkdown: true
     }
 ];
@@ -468,7 +471,7 @@ describe('GoogleDriveExplorer', () => {
             render(<GoogleDriveExplorer />);
 
             const fileContextMenus = screen.getAllByTestId('file-context-menu');
-            const lastMenu = fileContextMenus[fileContextMenus.length - 1];
+            const lastMenu = fileContextMenus[fileContextMenus.length - 1]!;
             fireEvent.click(lastMenu);
 
             expect(screen.getByTestId('delete-file-modal')).toBeInTheDocument();
@@ -478,7 +481,7 @@ describe('GoogleDriveExplorer', () => {
             render(<GoogleDriveExplorer />);
 
             const fileContextMenus = screen.getAllByTestId('file-context-menu');
-            const lastMenu = fileContextMenus[fileContextMenus.length - 1];
+            const lastMenu = fileContextMenus[fileContextMenus.length - 1]!;
             fireEvent.click(lastMenu);
 
             fireEvent.click(screen.getByTestId('close-delete-modal'));
@@ -492,7 +495,7 @@ describe('GoogleDriveExplorer', () => {
             render(<GoogleDriveExplorer />);
 
             const fileContextMenus = screen.getAllByTestId('file-context-menu');
-            const lastMenu = fileContextMenus[fileContextMenus.length - 1];
+            const lastMenu = fileContextMenus[fileContextMenus.length - 1]!;
             fireEvent.click(lastMenu);
 
             fireEvent.click(screen.getByTestId('delete-file-success'));

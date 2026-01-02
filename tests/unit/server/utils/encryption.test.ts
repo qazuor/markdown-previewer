@@ -85,7 +85,7 @@ describe('encryption utils', () => {
 
             // Tamper with the encrypted data
             const buffer = Buffer.from(encrypted, 'base64');
-            buffer[50] = buffer[50] ^ 0xff; // Flip bits
+            buffer[50] = buffer[50]! ^ 0xff; // Flip bits
             const tampered = buffer.toString('base64');
 
             expect(() => decryptToken(tampered)).toThrow();
@@ -185,7 +185,7 @@ describe('encryption utils', () => {
 
             // Tamper with encrypted data
             const buffer = Buffer.from(encrypted, 'base64');
-            buffer[50] = buffer[50] ^ 0xff;
+            buffer[50] = buffer[50]! ^ 0xff;
             const tampered = buffer.toString('base64');
 
             const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});

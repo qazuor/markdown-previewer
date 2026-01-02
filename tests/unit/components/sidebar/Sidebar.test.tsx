@@ -25,7 +25,6 @@ vi.mock('@/components/ui', () => ({
 }));
 
 // Mock child components
-const mockSetActiveSection = vi.fn();
 vi.mock('@/components/sidebar/SidebarNav', () => ({
     SidebarNav: ({
         activeSection,
