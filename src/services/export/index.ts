@@ -15,3 +15,9 @@ export {
     type ImageFormat
 } from './image';
 export { exportToPdf, generatePdfBlob, type PdfExportOptions } from './pdf';
+export {
+    validateExportRequest,
+    wrapHtmlForExport,
+    type ExportRequestBody,
+    type ServerExportOptions
+} from './serverExport';

@@ -1,7 +1,8 @@
 import welcomeContentEs from '@/assets/welcome-es.md?raw';
 import welcomeContentEn from '@/assets/welcome.md?raw';
 import { UserMenu } from '@/components/auth';
-import { useMobile } from '@/hooks';
+import { ExportOverlay } from '@/components/ui/ExportOverlay';
+import { useMobile, useTheme } from '@/hooks';
 import { renderMarkdown } from '@/services/markdown';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -55,6 +56,7 @@ export function Header({ onImport, onStartTour, className }: HeaderProps) {
     const { isMobile } = useMobile();
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const [isExporting, setIsExporting] = useState(false);
+    const [exportingFormat, setExportingFormat] = useState<'pdf' | 'png' | 'jpeg' | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const previewWindowRef = useRef<Window | null>(null);
 
@@ -67,7 +69,7 @@ export function Header({ onImport, onStartTour, className }: HeaderProps) {
     const setViewMode = useUIStore((s) => s.setViewMode);
     const toggleSidebar = useUIStore((s) => s.toggleSidebar);
     const setPendingRenameDocumentId = useUIStore((s) => s.setPendingRenameDocumentId);
-    const theme = useSettingsStore((s) => s.theme);
+    const { isDark } = useTheme();
     const zoomIn = useSettingsStore((s) => s.zoomIn);
     const zoomOut = useSettingsStore((s) => s.zoomOut);
     const resetZoom = useSettingsStore((s) => s.resetZoom);
@@ -172,39 +174,62 @@ export function Header({ onImport, onStartTour, className }: HeaderProps) {
             setIsExporting(true);
             closeMenu();
 
+            // Set exporting format for overlay (only for server-side exports)
+            if (format === 'pdf' || format === 'png' || format === 'jpeg') {
+                setExportingFormat(format);
+            }
+
             try {
                 const filename = currentDocument.name || 'document';
-                const exportTheme = theme === 'dark' ? 'dark' : 'light';
+                const exportTheme = isDark ? 'dark' : 'light';
 
                 if (format === 'markdown') {
+                    // Client-side: works fine
                     const { downloadMarkdown } = await import('@/services/export');
                     downloadMarkdown(currentDocument.content, filename);
                 } else if (format === 'html') {
+                    // Client-side: works fine
                     const { exportHtml } = await import('@/services/export');
                     const htmlContent = await renderMarkdown(currentDocument.content, exportTheme);
                     exportHtml(htmlContent, filename, { theme: exportTheme });
-                } else if (format === 'pdf') {
-                    const { exportToPdf } = await import('@/services/export');
+                } else if (format === 'pdf' || format === 'png' || format === 'jpeg') {
+                    // Server-side: use Puppeteer on Vercel
+                    const { wrapHtmlForExport } = await import('@/services/export');
+                    const { saveAs } = await import('file-saver');
+
                     const htmlContent = await renderMarkdown(currentDocument.content, exportTheme);
-                    await exportToPdf(htmlContent, {
-                        filename,
+                    const wrappedHtml = wrapHtmlForExport(htmlContent, {
+                        title: filename,
                         theme: exportTheme
                     });
-                } else if (format === 'png' || format === 'jpeg') {
-                    const { exportToImage } = await import('@/services/export');
-                    await exportToImage({
-                        filename,
-                        format,
-                        backgroundColor: exportTheme === 'dark' ? '#1f2937' : '#ffffff'
+
+                    const response = await fetch(`/api/export/${format}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            html: wrappedHtml,
+                            filename,
+                            options: format === 'pdf' ? { pageSize: 'A4' } : { quality: 90 }
+                        })
                     });
+
+                    if (!response.ok) {
+                        const error = await response.json().catch(() => ({ error: 'Export failed' }));
+                        throw new Error(error.error || 'Export failed');
+                    }
+
+                    const blob = await response.blob();
+                    const extension = format === 'jpeg' ? 'jpg' : format;
+                    saveAs(blob, `${filename}.${extension}`);
                 }
             } catch (error) {
                 console.error(`Export to ${format} failed:`, error);
             } finally {
                 setIsExporting(false);
+                setExportingFormat(null);
             }
         },
-        [currentDocument, isExporting, theme, closeMenu]
+        [currentDocument, isExporting, isDark, closeMenu]
     );
 
     const fileMenuItems: MenuItem[] = [
@@ -455,6 +480,9 @@ export function Header({ onImport, onStartTour, className }: HeaderProps) {
                 // biome-ignore lint/a11y/useKeyWithClickEvents: Backdrop is purely visual
                 <div className="fixed inset-0 z-40" onClick={closeMenu} />
             )}
+
+            {/* Export loading overlay */}
+            <ExportOverlay isVisible={isExporting && exportingFormat !== null} format={exportingFormat} />
         </header>
     );
 }
