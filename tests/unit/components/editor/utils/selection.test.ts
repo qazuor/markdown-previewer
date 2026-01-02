@@ -16,7 +16,7 @@ function createMockView(doc: string, from: number, to: number = from) {
     const lines = doc.split('\n');
     const lineStartPositions: number[] = [0];
     for (let i = 0; i < lines.length - 1; i++) {
-        lineStartPositions.push(lineStartPositions[i] + lines[i].length + 1);
+        lineStartPositions.push(lineStartPositions[i]! + lines[i]!.length + 1);
     }
 
     const mockView = {
@@ -30,26 +30,26 @@ function createMockView(doc: string, from: number, to: number = from) {
                     let lineNum = 1;
                     let lineStart = 0;
                     for (let i = 0; i < lineStartPositions.length; i++) {
-                        if (pos >= lineStartPositions[i]) {
+                        if (pos >= lineStartPositions[i]!) {
                             lineNum = i + 1;
-                            lineStart = lineStartPositions[i];
+                            lineStart = lineStartPositions[i]!;
                         }
                     }
-                    const lineEnd = lineNum < lines.length ? lineStartPositions[lineNum] - 1 : doc.length;
+                    const lineEnd = lineNum < lines.length ? lineStartPositions[lineNum]! - 1 : doc.length;
                     return {
                         from: lineStart,
                         to: lineEnd,
-                        text: lines[lineNum - 1],
+                        text: lines[lineNum - 1]!,
                         number: lineNum
                     };
                 },
                 line: (num: number) => {
-                    const lineStart = lineStartPositions[num - 1];
-                    const lineEnd = num < lines.length ? lineStartPositions[num] - 1 : doc.length;
+                    const lineStart = lineStartPositions[num - 1]!;
+                    const lineEnd = num < lines.length ? lineStartPositions[num]! - 1 : doc.length;
                     return {
                         from: lineStart,
                         to: lineEnd,
-                        text: lines[num - 1],
+                        text: lines[num - 1]!,
                         number: num
                     };
                 }
@@ -164,7 +164,7 @@ describe('selection utilities', () => {
     describe('getCurrentLine', () => {
         it('should return first line info', () => {
             const { view } = createMockView('hello\nworld', 2, 2);
-            const line = getCurrentLine(view.state);
+            const line = getCurrentLine((view as any).state);
 
             expect(line.from).toBe(0);
             expect(line.to).toBe(5);
@@ -173,7 +173,7 @@ describe('selection utilities', () => {
 
         it('should return second line info', () => {
             const { view } = createMockView('hello\nworld', 8, 8);
-            const line = getCurrentLine(view.state);
+            const line = getCurrentLine((view as any).state);
 
             expect(line.from).toBe(6);
             expect(line.text).toBe('world');

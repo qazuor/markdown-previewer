@@ -147,7 +147,7 @@ describe('LoginModal', () => {
 
         it('should disable buttons while GitHub login is in progress', async () => {
             // Create a promise that doesn't resolve immediately
-            let resolveLogin: () => void;
+            let resolveLogin: (() => void) | undefined;
             const loginPromise = new Promise<void>((resolve) => {
                 resolveLogin = resolve;
             });

@@ -203,11 +203,11 @@ describe('useDocumentSync', () => {
             content: '# Test',
             source: 'local',
             syncStatus: 'synced',
-            createdAt: '2024-01-01T00:00:00Z',
-            modifiedAt: '2024-01-01T00:00:00Z',
+            createdAt: new Date('2024-01-01T00:00:00Z'),
+            updatedAt: new Date('2024-01-01T00:00:00Z'),
             isManuallyNamed: false,
-            cursor: { line: 1, col: 1 },
-            scroll: { x: 0, y: 0 }
+            cursor: { line: 1, column: 1 },
+            scroll: { line: 0, percentage: 0 }
         });
 
         it('should queue document for sync when authenticated', () => {
@@ -226,8 +226,8 @@ describe('useDocumentSync', () => {
                 content: '# Test',
                 folderId: null,
                 isManuallyNamed: false,
-                cursor: { line: 1, col: 1 },
-                scroll: { x: 0, y: 0 },
+                cursor: { line: 1, column: 1 },
+                scroll: { line: 0, percentage: 0 },
                 syncVersion: 0
             });
         });

@@ -29,8 +29,8 @@ vi.mock('@/components/editor', () => ({
     }) => {
         // Simulate calling the callbacks on mount
         if (onViewReady) onViewReady({ mock: 'editorView' });
-        if (onScrollToReady) onScrollToReady((percent: number) => {});
-        if (onScrollToLineReady) onScrollToLineReady((line: number) => {});
+        if (onScrollToReady) onScrollToReady((_percent: number) => {});
+        if (onScrollToLineReady) onScrollToLineReady((_line: number) => {});
 
         return (
             <div
@@ -68,8 +68,8 @@ vi.mock('@/components/preview', () => ({
         onScrollToLineReady?: (fn: (line: number) => void) => void;
     }) => {
         // Simulate calling the callbacks on mount
-        if (onScrollToReady) onScrollToReady((percent: number) => {});
-        if (onScrollToLineReady) onScrollToLineReady((line: number) => {});
+        if (onScrollToReady) onScrollToReady((_percent: number) => {});
+        if (onScrollToLineReady) onScrollToLineReady((_line: number) => {});
 
         return (
             <div
@@ -94,15 +94,11 @@ vi.mock('@/components/ui', () => ({
         left,
         right,
         defaultSize,
-        minSize,
-        maxSize,
         onResize
     }: {
         left: React.ReactNode;
         right: React.ReactNode;
         defaultSize?: number;
-        minSize?: number;
-        maxSize?: number;
         onResize?: (size: number) => void;
     }) => (
         <div data-testid="split-pane" data-default-size={defaultSize}>
@@ -159,12 +155,12 @@ vi.mock('@/utils/cn', () => ({
 }));
 
 // Store mocks
-const mockViewMode = vi.fn<[], 'editor' | 'preview' | 'split'>().mockReturnValue('split');
+const mockViewMode = vi.fn<() => 'editor' | 'preview' | 'split'>().mockReturnValue('split');
 const mockSetViewMode = vi.fn();
-const mockActiveDocumentId = vi.fn<[], string | null>().mockReturnValue('doc-1');
+const mockActiveDocumentId = vi.fn<() => string | null>().mockReturnValue('doc-1');
 const mockDocuments = new Map([['doc-1', { id: 'doc-1', name: 'test.md', content: '# Test Document' }]]);
 const mockUpdateContent = vi.fn();
-const mockSyncScroll = vi.fn<[], boolean>().mockReturnValue(true);
+const mockSyncScroll = vi.fn<() => boolean>().mockReturnValue(true);
 
 // Mock UI store
 vi.mock('@/stores/uiStore', () => ({

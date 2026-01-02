@@ -195,9 +195,7 @@ describe('quota', () => {
             const suggestions = getCleanupSuggestions('markview:');
 
             expect(suggestions).toHaveLength(3);
-            // biome-ignore lint/style/noNonNullAssertion: Length asserted above
             expect(suggestions[0]!.size).toBeGreaterThan(suggestions[1]!.size);
-            // biome-ignore lint/style/noNonNullAssertion: Length asserted above
             expect(suggestions[1]!.size).toBeGreaterThan(suggestions[2]!.size);
         });
 

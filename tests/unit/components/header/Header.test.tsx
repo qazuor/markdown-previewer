@@ -14,10 +14,11 @@ vi.mock('react-i18next', () => ({
     })
 }));
 
-// Mock useMobile hook
+// Mock hooks
 const mockIsMobile = vi.fn(() => false);
 vi.mock('@/hooks', () => ({
-    useMobile: () => ({ isMobile: mockIsMobile() })
+    useMobile: () => ({ isMobile: mockIsMobile() }),
+    useTheme: () => ({ isDark: false, theme: 'light', resolvedTheme: 'light' })
 }));
 
 // Mock UserMenu component

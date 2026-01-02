@@ -1,5 +1,5 @@
 import { useSettingsSync } from '@/hooks/useSettingsSync';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock useAuth
@@ -9,8 +9,10 @@ vi.mock('@/components/auth/AuthProvider', () => ({
 }));
 
 // Mock settings store
+type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'offline';
+
 const mockSettingsStore = {
-    syncStatus: 'idle' as const,
+    syncStatus: 'idle' as SyncStatus,
     lastSyncedAt: null as string | null,
     syncError: null as string | null,
     pendingChanges: false,
@@ -309,7 +311,7 @@ describe('useSettingsSync', () => {
     describe('online/offline handling', () => {
         it('should handle online event when offline with pending changes', async () => {
             mockUseAuth.mockReturnValue({ isAuthenticated: true });
-            mockSettingsStore.syncStatus = 'offline';
+            mockSettingsStore.syncStatus = 'offline' as SyncStatus;
             mockSettingsStore.pendingChanges = true;
             mockSettingsStore.getSettingsForSync.mockReturnValue({});
             mockFetch.mockResolvedValue({ ok: true });
@@ -327,7 +329,7 @@ describe('useSettingsSync', () => {
 
         it('should set idle when coming online without pending changes', async () => {
             mockUseAuth.mockReturnValue({ isAuthenticated: true });
-            mockSettingsStore.syncStatus = 'offline';
+            mockSettingsStore.syncStatus = 'offline' as SyncStatus;
             mockSettingsStore.pendingChanges = false;
 
             renderHook(() => useSettingsSync());
@@ -341,7 +343,7 @@ describe('useSettingsSync', () => {
 
         it('should set offline status when going offline during sync', async () => {
             mockUseAuth.mockReturnValue({ isAuthenticated: true });
-            mockSettingsStore.syncStatus = 'syncing';
+            mockSettingsStore.syncStatus = 'syncing' as SyncStatus;
 
             renderHook(() => useSettingsSync());
 

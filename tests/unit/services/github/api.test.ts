@@ -283,8 +283,7 @@ describe('services/github/api', () => {
             });
 
             const result = await commitFile({
-                owner: 'testowner',
-                repo: 'testrepo',
+                repo: 'testowner/testrepo',
                 path: 'docs/README.md',
                 content: '# Hello',
                 message: 'Add README'
@@ -312,8 +311,7 @@ describe('services/github/api', () => {
             });
 
             const result = await commitFile({
-                owner: 'testowner',
-                repo: 'testrepo',
+                repo: 'testowner/testrepo',
                 path: 'docs/README.md',
                 content: '# Updated',
                 message: 'Update README',
@@ -333,8 +331,7 @@ describe('services/github/api', () => {
 
             await expect(
                 commitFile({
-                    owner: 'testowner',
-                    repo: 'testrepo',
+                    repo: 'testowner/testrepo',
                     path: 'docs/README.md',
                     content: '# Content',
                     message: 'Update',
@@ -352,8 +349,7 @@ describe('services/github/api', () => {
 
             await expect(
                 commitFile({
-                    owner: 'testowner',
-                    repo: 'testrepo',
+                    repo: 'testowner/testrepo',
                     path: 'docs/README.md',
                     content: '# Content',
                     message: 'Update'
@@ -370,8 +366,7 @@ describe('services/github/api', () => {
             });
 
             const result = await deleteFile({
-                owner: 'testowner',
-                repo: 'testrepo',
+                repo: 'testowner/testrepo',
                 path: 'docs/old-file.md',
                 sha: 'file-sha',
                 message: 'Delete old file'
@@ -395,8 +390,7 @@ describe('services/github/api', () => {
 
             await expect(
                 deleteFile({
-                    owner: 'testowner',
-                    repo: 'testrepo',
+                    repo: 'testowner/testrepo',
                     path: 'docs/missing.md',
                     sha: 'wrong-sha',
                     message: 'Delete'
@@ -413,8 +407,7 @@ describe('services/github/api', () => {
 
             await expect(
                 deleteFile({
-                    owner: 'testowner',
-                    repo: 'testrepo',
+                    repo: 'testowner/testrepo',
                     path: 'docs/file.md',
                     sha: 'stale-sha',
                     message: 'Delete'

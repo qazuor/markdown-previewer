@@ -1,7 +1,7 @@
 import { getAuthUser, getOptionalUser, optionalAuth, requireAuth } from '@/server/api/middleware/auth';
 import { createMockContext, createMockNext, createMockUser } from '@test/helpers/server';
 import { HTTPException } from 'hono/http-exception';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('auth middleware', () => {
     describe('requireAuth', () => {

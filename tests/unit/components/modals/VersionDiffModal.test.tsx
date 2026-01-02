@@ -235,7 +235,7 @@ describe('VersionDiffModal', () => {
         });
 
         it('should recalculate when versionId changes', () => {
-            mockGetVersion.mockImplementation((docId: string, vId: string) => {
+            mockGetVersion.mockImplementation((_docId: string, vId: string) => {
                 if (vId === 'v2')
                     return {
                         ...mockVersion,

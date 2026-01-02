@@ -44,7 +44,6 @@ describe('versions', () => {
 
             expect(result.version?.id).toMatch(/^v_\d+_/);
             expect(result.version?.createdAt).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Asserted above with toBeDefined
             expect(new Date(result.version!.createdAt).getTime()).not.toBeNaN();
         });
 
@@ -106,7 +105,6 @@ describe('versions', () => {
     describe('getVersion', () => {
         it('should return specific version by ID', () => {
             const saved = saveVersion(testDocId, 'Test content');
-            // biome-ignore lint/style/noNonNullAssertion: Version is created in saveVersion
             const versionId = saved.version!.id;
 
             const version = getVersion(testDocId, versionId);
@@ -123,7 +121,6 @@ describe('versions', () => {
 
         it('should return null for wrong document', () => {
             const saved = saveVersion(testDocId, 'Content');
-            // biome-ignore lint/style/noNonNullAssertion: Version is created in saveVersion
             const version = getVersion('other-doc', saved.version!.id);
 
             expect(version).toBeNull();
@@ -134,7 +131,6 @@ describe('versions', () => {
         it('should delete specific version', () => {
             const v1 = saveVersion(testDocId, 'Version 1');
             saveVersion(testDocId, 'Version 2');
-            // biome-ignore lint/style/noNonNullAssertion: Version is created in saveVersion
             const result = deleteVersion(testDocId, v1.version!.id);
 
             expect(result).toBe(true);
@@ -149,7 +145,6 @@ describe('versions', () => {
 
         it('should remove storage key when last version deleted', () => {
             const saved = saveVersion(testDocId, 'Only version');
-            // biome-ignore lint/style/noNonNullAssertion: Version is created in saveVersion
             deleteVersion(testDocId, saved.version!.id);
 
             expect(getVersions(testDocId)).toEqual([]);
@@ -177,7 +172,6 @@ describe('versions', () => {
     describe('updateVersionLabel', () => {
         it('should update version label', () => {
             const saved = saveVersion(testDocId, 'Content', 'Old Label');
-            // biome-ignore lint/style/noNonNullAssertion: Version is created in saveVersion
             const versionId = saved.version!.id;
 
             const result = updateVersionLabel(testDocId, versionId, 'New Label');

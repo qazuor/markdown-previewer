@@ -71,11 +71,11 @@ vi.mock('@/components/editor/extensions', () => ({
     createBracketMatchingExtension: vi.fn(() => []),
     createEmptyLinter: vi.fn(() => []),
     createHistoryExtension: vi.fn(() => []),
-    createLineNumbersExtension: vi.fn((enabled: boolean) => []),
+    createLineNumbersExtension: vi.fn((_enabled: boolean) => []),
     createMarkdownExtension: vi.fn(() => []),
     createMarkdownLinter: vi.fn(() => []),
-    createMinimapExtension: vi.fn((enabled: boolean) => []),
-    createWordWrapExtension: vi.fn((enabled: boolean) => [])
+    createMinimapExtension: vi.fn((_enabled: boolean) => []),
+    createWordWrapExtension: vi.fn((_enabled: boolean) => [])
 }));
 
 // Mock keymap
@@ -387,11 +387,13 @@ describe('useCodeMirror', () => {
 
     describe('option changes', () => {
         it('should handle theme change', () => {
-            const { result, rerender } = renderHook(({ theme }) => useCodeMirror({ theme }), { initialProps: { theme: 'light' as const } });
+            const { result, rerender } = renderHook(({ theme }: { theme: 'light' | 'dark' }) => useCodeMirror({ theme }), {
+                initialProps: { theme: 'light' as 'light' | 'dark' }
+            });
 
             expect(result.current.editorRef).toBeDefined();
 
-            rerender({ theme: 'dark' as const });
+            rerender({ theme: 'dark' });
 
             expect(result.current.editorRef).toBeDefined();
         });

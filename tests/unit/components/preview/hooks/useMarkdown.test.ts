@@ -1,5 +1,5 @@
 import { useMarkdown } from '@/components/preview/hooks/useMarkdown';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock markdown service with hoisted mock

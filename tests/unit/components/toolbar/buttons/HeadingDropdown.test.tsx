@@ -133,7 +133,6 @@ describe('HeadingDropdown', () => {
 
             const items = screen.getAllByTestId('dropdown-item');
             expect(items[0]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[0]!); // Paragraph
 
             expect(mockOnHeading).toHaveBeenCalledWith(0);
@@ -145,7 +144,6 @@ describe('HeadingDropdown', () => {
 
             const items = screen.getAllByTestId('dropdown-item');
             expect(items[1]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[1]!); // H1
 
             expect(mockOnHeading).toHaveBeenCalledWith(1);
@@ -157,7 +155,6 @@ describe('HeadingDropdown', () => {
 
             const items = screen.getAllByTestId('dropdown-item');
             expect(items[3]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[3]!); // H3
 
             expect(mockOnHeading).toHaveBeenCalledWith(3);
@@ -169,7 +166,6 @@ describe('HeadingDropdown', () => {
 
             const items = screen.getAllByTestId('dropdown-item');
             expect(items[6]).toBeDefined();
-            // biome-ignore lint/style/noNonNullAssertion: Test context - items array verified above
             fireEvent.click(items[6]!); // H6
 
             expect(mockOnHeading).toHaveBeenCalledWith(6);

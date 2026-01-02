@@ -1,5 +1,5 @@
 import { AuthProvider, useAuth } from '@/components/auth/AuthProvider';
-import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock auth-client with hoisted mocks
