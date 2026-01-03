@@ -9,9 +9,8 @@ build/
 .nuxt/
 out/
 
-# Bundled API functions (generated during Vercel build)
-api/**/*.js
-api-dist/
+# Bundled API functions (generated during build from src/api/)
+/api/
 
 # Tauri
 src-tauri/target/
