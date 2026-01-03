@@ -9,8 +9,8 @@ build/
 .nuxt/
 out/
 
-# Bundled API functions (generated during build from src/api/)
-/api/
+# Note: api/ folder contains bundled JS from src/api/
+# We commit these so Vercel can detect them as serverless functions
 
 # Tauri
 src-tauri/target/
