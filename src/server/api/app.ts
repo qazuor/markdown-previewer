@@ -160,6 +160,68 @@ app.get('/api/auth/test', (c) => {
     return c.json({ status: 'auth routes reachable', timestamp: new Date().toISOString() });
 });
 
+// Debug: Test social sign-in without the full flow
+app.get('/api/debug/test-social-signin', async (c) => {
+    const steps: { step: string; time: number; error?: string }[] = [];
+    const start = Date.now();
+
+    try {
+        steps.push({ step: '1. Start', time: Date.now() - start });
+
+        // Create a mock request for social sign-in
+        const mockBody = JSON.stringify({
+            provider: 'github',
+            callbackURL: 'https://qazuor-markview.vercel.app/'
+        });
+        steps.push({ step: '2. Body created', time: Date.now() - start });
+
+        const baseUrl = process.env.BETTER_AUTH_URL || 'http://localhost:5173';
+        const mockRequest = new Request(`${baseUrl}/api/auth/sign-in/social`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Host': new URL(baseUrl).host
+            },
+            body: mockBody
+        });
+        steps.push({ step: '3. Request created', time: Date.now() - start });
+
+        // Try to call auth.handler with a timeout
+        const timeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(() => reject(new Error('Auth handler timeout after 10s')), 10000);
+        });
+
+        const authPromise = auth.handler(mockRequest);
+        steps.push({ step: '4. Auth handler called', time: Date.now() - start });
+
+        const response = await Promise.race([authPromise, timeoutPromise]);
+        steps.push({ step: '5. Response received', time: Date.now() - start });
+
+        const responseText = await response.text();
+        steps.push({ step: '6. Response body read', time: Date.now() - start });
+
+        return c.json({
+            success: true,
+            status: response.status,
+            responsePreview: responseText.substring(0, 500),
+            steps,
+            totalTime: Date.now() - start
+        });
+    } catch (error) {
+        steps.push({
+            step: 'ERROR',
+            time: Date.now() - start,
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+
+        return c.json({
+            success: false,
+            steps,
+            totalTime: Date.now() - start
+        }, 500);
+    }
+});
+
 // Auth routes - Better Auth handler (with rate limiting)
 app.use('/api/auth/*', createRateLimiter('auth'));
 app.on(['GET', 'POST'], '/api/auth/*', async (c) => {
