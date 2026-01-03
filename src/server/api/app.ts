@@ -114,80 +114,13 @@ app.onError((err, c) => {
 app.get('/api/health', (c) => {
     return c.json({
         status: 'ok',
-        timestamp: new Date().toISOString(),
-        env: process.env.NODE_ENV
-    });
-});
-
-// Debug: Check what cookies are received
-app.get('/api/debug/cookies', (c) => {
-    const cookies = c.req.header('cookie') || 'none';
-    const allHeaders: Record<string, string> = {};
-    c.req.raw.headers.forEach((value, key) => {
-        allHeaders[key] = value;
-    });
-    return c.json({
-        cookies,
-        headerCount: Object.keys(allHeaders).length,
-        hasCookie: 'cookie' in allHeaders,
-        headers: allHeaders
+        timestamp: new Date().toISOString()
     });
 });
 
 // Auth routes - Better Auth handler (with rate limiting)
 app.use('/api/auth/*', createRateLimiter('auth'));
-app.on(['GET', 'POST'], '/api/auth/*', async (c) => {
-    const path = c.req.path;
-    const cookies = c.req.header('cookie') || 'NO COOKIES';
-
-    // Log sign-in requests
-    if (path.includes('/sign-in/')) {
-        console.log('[AUTH SIGN-IN] Path:', path);
-        console.log('[AUTH SIGN-IN] Method:', c.req.method);
-    }
-
-    // Log callback requests for debugging
-    if (path.includes('/callback/')) {
-        const state = c.req.query('state') || 'NO STATE';
-        const code = c.req.query('code') ? 'PRESENT' : 'MISSING';
-        console.log('[AUTH CALLBACK] Path:', path);
-        console.log('[AUTH CALLBACK] State in URL:', state.substring(0, 20) + '...');
-        console.log('[AUTH CALLBACK] Code:', code);
-        console.log('[AUTH CALLBACK] Cookies received:', cookies);
-
-        // Parse cookies to find state cookie
-        const cookieObj: Record<string, string> = {};
-        cookies.split(';').forEach((cookie) => {
-            const [key, val] = cookie.trim().split('=');
-            if (key) cookieObj[key] = val || '';
-        });
-        const stateCookieKeys = Object.keys(cookieObj).filter(
-            (k) => k.includes('state') || k.includes('oauth') || k.includes('pkce')
-        );
-        console.log('[AUTH CALLBACK] State-related cookies found:', stateCookieKeys);
-    }
-
-    // Call better-auth handler and log response
-    const response = await auth.handler(c.req.raw);
-
-    // Log Set-Cookie headers from the response
-    const setCookies = response.headers.getSetCookie?.() || [];
-    if (setCookies.length > 0) {
-        console.log('[AUTH RESPONSE] Set-Cookie count:', setCookies.length);
-        for (const cookie of setCookies) {
-            const cookieName = cookie.split('=')[0];
-            console.log('[AUTH RESPONSE] Setting cookie:', cookieName);
-        }
-    }
-
-    // Log redirects
-    const location = response.headers.get('location');
-    if (location) {
-        console.log('[AUTH RESPONSE] Redirecting to:', location);
-    }
-
-    return response;
-});
+app.on(['GET', 'POST'], '/api/auth/*', (c) => auth.handler(c.req.raw));
 
 // Mount route groups with rate limiting
 app.use('/api/sync/*', createRateLimiter('sync'));
