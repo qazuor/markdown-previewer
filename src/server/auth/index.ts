@@ -3,6 +3,30 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '../db';
 import * as schema from '../db/schema';
 
+// Determine the base URL for OAuth callbacks
+// In production on Vercel, we need to use the canonical production URL
+// because OAuth providers (GitHub, Google) have their callbacks configured
+// for that specific URL, not the deployment-specific VERCEL_URL
+function getBaseURL(): string {
+    // Explicit configuration takes priority
+    if (process.env.BETTER_AUTH_URL) {
+        return process.env.BETTER_AUTH_URL;
+    }
+    if (process.env.NEXT_PUBLIC_APP_URL) {
+        return process.env.NEXT_PUBLIC_APP_URL;
+    }
+    // In Vercel production, use the canonical URL
+    // VERCEL_URL is deployment-specific and won't match OAuth callback configs
+    if (process.env.VERCEL) {
+        return 'https://qazuor-markview.vercel.app';
+    }
+    return 'http://localhost:5173';
+}
+
+const baseURL = getBaseURL();
+console.log('[AUTH CONFIG] Base URL:', baseURL);
+console.log('[AUTH CONFIG] NODE_ENV:', process.env.NODE_ENV);
+
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: 'pg',
@@ -63,7 +87,7 @@ export const auth = betterAuth({
     },
 
     // Base URL for callbacks
-    baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:5173',
+    baseURL,
 
     // Secret for signing
     secret: process.env.BETTER_AUTH_SECRET,
