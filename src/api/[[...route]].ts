@@ -1,5 +1,5 @@
+import app from '@/server/api/app';
 import { handle } from 'hono/vercel';
-import app from '../src/server/api/app';
 
 // Export Hono app as Vercel serverless function
 export const GET = handle(app);

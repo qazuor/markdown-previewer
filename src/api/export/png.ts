@@ -28,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Dynamic import to avoid bundling issues
-        const { generateImage } = await import('../../src/server/utils/browser');
+        const { generateImage } = await import('@/server/utils/browser');
 
         const imageBuffer = await generateImage(html, {
             type: 'png',

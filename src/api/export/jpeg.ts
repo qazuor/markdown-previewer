@@ -17,8 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             html: string;
             filename: string;
             options?: {
-                pageSize?: 'A4' | 'Letter' | 'Legal' | 'A3';
-                landscape?: boolean;
+                quality?: number;
             };
         };
 
@@ -32,31 +31,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Dynamic import to avoid bundling issues
-        const { generatePdf } = await import('../../src/server/utils/browser');
+        const { generateImage } = await import('@/server/utils/browser');
 
-        const pdfBuffer = await generatePdf(html, {
-            format: options?.pageSize || 'A4',
-            landscape: options?.landscape || false,
-            printBackground: true,
-            margin: {
-                top: '10mm',
-                right: '10mm',
-                bottom: '10mm',
-                left: '10mm'
-            }
+        const imageBuffer = await generateImage(html, {
+            type: 'jpeg',
+            quality: options?.quality || 90,
+            fullPage: true
         });
 
-        // Set response headers for PDF download
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}.pdf"`);
-        res.setHeader('Content-Length', pdfBuffer.length.toString());
+        // Set response headers for JPEG download
+        res.setHeader('Content-Type', 'image/jpeg');
+        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}.jpg"`);
+        res.setHeader('Content-Length', imageBuffer.length.toString());
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-        return res.send(pdfBuffer);
+        return res.send(imageBuffer);
     } catch (error) {
-        console.error('PDF export error:', error);
+        console.error('JPEG export error:', error);
         return res.status(500).json({
-            error: 'Failed to generate PDF',
+            error: 'Failed to generate JPEG',
             message: error instanceof Error ? error.message : 'Unknown error'
         });
     }

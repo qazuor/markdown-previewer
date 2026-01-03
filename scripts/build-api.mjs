@@ -1,18 +1,21 @@
 #!/usr/bin/env node
-import { mkdirSync, readdirSync, statSync, unlinkSync } from 'node:fs';
+import { mkdirSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 /**
  * Build API functions for Vercel deployment
  *
  * This script bundles the API functions with their dependencies
  * so that Vercel can deploy them as serverless functions.
- * It outputs .js files that replace the .ts files for Vercel to use.
+ *
+ * Source files: src/api/
+ * Output files: api/ (bundled .js files)
  */
 import * as esbuild from 'esbuild';
 
-const apiDir = resolve('api');
+const srcApiDir = resolve('src/api');
+const outApiDir = resolve('api');
 
-// Find all TypeScript files in api directory
+// Find all TypeScript files in source api directory
 function findApiFiles(dir, files = []) {
     const entries = readdirSync(dir);
     for (const entry of entries) {
@@ -27,14 +30,14 @@ function findApiFiles(dir, files = []) {
     return files;
 }
 
-const apiFiles = findApiFiles(apiDir);
+const apiFiles = findApiFiles(srcApiDir);
 console.log('📦 Building API functions...');
 
 // Build each API file
 for (const file of apiFiles) {
-    const relativePath = file.replace(`${apiDir}/`, '');
-    // Output as .js next to the .ts file
-    const outfile = file.replace('.ts', '.js');
+    const relativePath = file.replace(`${srcApiDir}/`, '');
+    // Output to api/ folder with .js extension
+    const outfile = join(outApiDir, relativePath.replace('.ts', '.js'));
 
     console.log(`  → ${relativePath}`);
 
@@ -65,9 +68,7 @@ for (const file of apiFiles) {
         treeShaking: true
     });
 
-    // Remove original .ts file so Vercel uses the bundled .js
-    unlinkSync(file);
-    console.log(`  ✓ Removed ${relativePath} (using bundled .js)`);
+    console.log(`  ✓ Built ${outfile.replace(`${resolve('.')}/`, '')}`);
 }
 
 console.log('✅ API functions built successfully!');
