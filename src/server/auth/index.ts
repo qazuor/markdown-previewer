@@ -24,8 +24,6 @@ function getBaseURL(): string {
 }
 
 const baseURL = getBaseURL();
-console.log('[AUTH CONFIG] Base URL:', baseURL);
-console.log('[AUTH CONFIG] NODE_ENV:', process.env.NODE_ENV);
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
