@@ -4,10 +4,17 @@
     "devCommand": "pnpm dev",
     "outputDirectory": "dist",
     "framework": "vite",
+    "env": {
+        "NODEJS_HELPERS": "0"
+    },
     "rewrites": [
         {
+            "source": "/api/export/:path*",
+            "destination": "/api/export/:path*"
+        },
+        {
             "source": "/api/:path*",
-            "destination": "/api/:path*"
+            "destination": "/api"
         },
         {
             "source": "/((?!api/).*)",
