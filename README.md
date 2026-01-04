@@ -2,16 +2,17 @@
 
 <div align="center">
 
-![MarkView Logo](https://via.placeholder.com/200x200.png?text=MarkView)
+![MarkView Logo](public/favicon.svg)
 
 **Markdown, visualized** - A modern, feature-rich markdown editor and previewer.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.0-646cff.svg)](https://vitejs.dev/)
+[![Hono](https://img.shields.io/badge/Hono-4.7-orange.svg)](https://hono.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Demo](https://markview-demo.vercel.app) • [Documentation](docs/USER_GUIDE.md) • [Contributing](CONTRIBUTING.md)
+[Live Demo](https://qazuor-markview.vercel.app) • [Documentation](docs/USER_GUIDE.md) • [Contributing](CONTRIBUTING.md)
 
 </div>
 
@@ -121,6 +122,8 @@
 
 ## Tech Stack
 
+### Frontend
+
 | Category | Technology |
 |----------|------------|
 | **Framework** | React 18 |
@@ -134,8 +137,24 @@
 | **Diagrams** | Mermaid |
 | **Math** | KaTeX |
 | **i18n** | i18next |
+
+### Backend
+
+| Category | Technology |
+|----------|------------|
+| **API Framework** | Hono |
+| **Authentication** | Better Auth |
+| **Database** | Neon PostgreSQL |
+| **ORM** | Drizzle |
+| **Deployment** | Vercel Serverless |
+
+### Development
+
+| Category | Technology |
+|----------|------------|
 | **Testing** | Vitest, Playwright |
 | **Linting** | Biome |
+| **Package Manager** | pnpm |
 
 ---
 
@@ -333,6 +352,8 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 
 ## Roadmap
 
+### ✅ Completed (v0.1.0)
+
 - [x] PWA with offline support
 - [x] Onboarding and feature tour
 - [x] Context menus for all components
@@ -342,12 +363,49 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 - [x] Google Drive integration with auto-sync
 - [x] Smart document creation (auto-edit name, H1 heading)
 - [x] Cloud delete options (local only or also from cloud)
-- [ ] Real-time collaboration
-- [ ] Desktop app with Tauri
-- [ ] Advanced export options (DOCX, LaTeX)
-- [ ] Plugin system
-- [ ] Custom themes editor
-- [ ] Vim/Emacs keybindings
+- [x] OAuth authentication (GitHub, Google)
+- [x] Comprehensive test suite (2920+ tests, 77%+ coverage)
+
+### 🚧 Next Steps
+
+#### High Priority
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Server-side PDF Export** | Use Puppeteer on Vercel for reliable PDF generation | Planned |
+| **Dropbox Integration** | Sync documents with Dropbox | Planned |
+| **OneDrive Integration** | Sync documents with Microsoft OneDrive | Planned |
+| **Image Upload** | Drag & drop images, upload to cloud storage | Planned |
+| **Share Links** | Generate shareable read-only links for documents | Planned |
+
+#### Medium Priority
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Real-time Collaboration** | Multiple users editing the same document | Research |
+| **Desktop App (Tauri)** | Native desktop app for Windows, macOS, Linux | Planned |
+| **Advanced Export** | Export to DOCX, LaTeX, EPUB formats | Planned |
+| **Custom Templates** | User-defined document templates | Planned |
+| **Snippets** | Reusable text snippets with shortcuts | Planned |
+
+#### Future Enhancements
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Plugin System** | Extensible architecture for custom plugins | Research |
+| **Custom Themes Editor** | Visual theme creator and customization | Planned |
+| **Vim/Emacs Keybindings** | Alternative keyboard modes | Planned |
+| **AI Writing Assistant** | Grammar, style suggestions, autocomplete | Research |
+| **Presentation Mode** | Turn markdown into slideshows | Planned |
+| **Comments & Annotations** | Inline comments for review | Research |
+| **GitLab Integration** | Support for GitLab repositories | Planned |
+| **Bitbucket Integration** | Support for Bitbucket repositories | Planned |
+| **Local File System Access** | File System Access API for direct file editing | Planned |
+| **Markdown Extensions** | Custom markdown syntax extensions | Research |
+
+### 💡 Feature Requests
+
+Have a feature idea? [Open an issue](https://github.com/qazuor/markview/issues/new?labels=enhancement) with the "enhancement" label!
 
 ---
 
