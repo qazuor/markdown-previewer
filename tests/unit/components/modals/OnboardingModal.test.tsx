@@ -1,6 +1,6 @@
 import { OnboardingModal } from '@/components/modals/OnboardingModal';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock react-i18next
 vi.mock('react-i18next', () => ({
@@ -62,6 +62,11 @@ describe('OnboardingModal', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
     });
 
     describe('rendering', () => {
@@ -109,43 +114,49 @@ describe('OnboardingModal', () => {
     });
 
     describe('step navigation', () => {
-        it('should navigate to features step when clicking next', () => {
+        it('should navigate to features step when clicking next', async () => {
             render(<OnboardingModal {...defaultProps} />);
 
             const nextButton = screen.getByText('common.next');
             fireEvent.click(nextButton);
+            await vi.runAllTimersAsync();
 
             expect(screen.getByText('onboarding.features.title')).toBeInTheDocument();
             expect(screen.getByText('onboarding.features.subtitle')).toBeInTheDocument();
         });
 
-        it('should navigate to shortcuts step from features', () => {
+        it('should navigate to shortcuts step from features', async () => {
             render(<OnboardingModal {...defaultProps} />);
 
             // Go to step 2
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
             // Go to step 3
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
 
             expect(screen.getByText('onboarding.shortcuts.title')).toBeInTheDocument();
         });
 
-        it('should show previous button on second step', () => {
+        it('should show previous button on second step', async () => {
             render(<OnboardingModal {...defaultProps} />);
 
             // Go to features step
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
 
             expect(screen.getByText('common.previous')).toBeInTheDocument();
         });
 
-        it('should navigate back when clicking previous', () => {
+        it('should navigate back when clicking previous', async () => {
             render(<OnboardingModal {...defaultProps} />);
 
             // Go to features step
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
             // Go back
             fireEvent.click(screen.getByText('common.previous'));
+            await vi.runAllTimersAsync();
 
             expect(screen.getByText('onboarding.welcome.title')).toBeInTheDocument();
         });
@@ -158,9 +169,10 @@ describe('OnboardingModal', () => {
     });
 
     describe('features step', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             render(<OnboardingModal {...defaultProps} />);
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
         });
 
         it('should show feature cards', () => {
@@ -186,10 +198,12 @@ describe('OnboardingModal', () => {
     });
 
     describe('shortcuts step', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             render(<OnboardingModal {...defaultProps} />);
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
         });
 
         it('should show keyboard shortcuts', () => {
@@ -223,11 +237,13 @@ describe('OnboardingModal', () => {
     });
 
     describe('final step buttons', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             render(<OnboardingModal {...defaultProps} />);
             // Navigate to final step
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
         });
 
         it('should show Get Started button on final step', () => {
@@ -272,10 +288,12 @@ describe('OnboardingModal', () => {
     });
 
     describe('start tour', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             render(<OnboardingModal {...defaultProps} />);
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
         });
 
         it('should call onComplete with true when Start Tour is clicked', () => {
@@ -292,10 +310,12 @@ describe('OnboardingModal', () => {
     });
 
     describe('get started', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             render(<OnboardingModal {...defaultProps} />);
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
         });
 
         it('should call onComplete with false when Get Started is clicked', () => {
@@ -363,9 +383,10 @@ describe('OnboardingModal', () => {
             expect(progressBars[2]).toHaveClass('bg-bg-tertiary');
         });
 
-        it('should highlight first two steps on second step', () => {
+        it('should highlight first two steps on second step', async () => {
             render(<OnboardingModal {...defaultProps} />);
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
 
             const progressBars = document.querySelectorAll('.h-1.flex-1.rounded-full');
             expect(progressBars[0]).toHaveClass('bg-primary-500');
@@ -373,10 +394,12 @@ describe('OnboardingModal', () => {
             expect(progressBars[2]).toHaveClass('bg-bg-tertiary');
         });
 
-        it('should highlight all steps on final step', () => {
+        it('should highlight all steps on final step', async () => {
             render(<OnboardingModal {...defaultProps} />);
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
 
             const progressBars = document.querySelectorAll('.h-1.flex-1.rounded-full');
             expect(progressBars[0]).toHaveClass('bg-primary-500');
