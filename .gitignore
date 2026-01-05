@@ -50,3 +50,7 @@ temp/
 Thumbs.db
 dev-dist/
 .vercel
+
+# Claude configuration (local only)
+.claude/
+CLAUDE.md
