@@ -8,6 +8,7 @@ export {
     type ContextMenuGroup,
     type ContextMenuPosition
 } from './useContextMenu';
+export { useContextualHints, type HintId } from './useContextualHints';
 export { useDebounce } from './useDebounce';
 export { useDocumentSync } from './useDocumentSync';
 export { useDragAndDrop } from './useDragAndDrop';
