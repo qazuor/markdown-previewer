@@ -364,44 +364,65 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 - [x] Smart document creation (auto-edit name, H1 heading)
 - [x] Cloud delete options (local only or also from cloud)
 - [x] OAuth authentication (GitHub, Google)
+- [x] Mermaid diagrams and KaTeX math
+- [x] Multiple preview themes (GitHub, GitLab, Notion, Obsidian, etc.)
 - [x] Comprehensive test suite (2920+ tests, 77%+ coverage)
 
-### 🚧 Next Steps
+### 🚧 Coming Soon
 
-#### High Priority
+#### Local File Management
 
 | Feature | Description | Status |
 |---------|-------------|--------|
-| **Server-side PDF Export** | Use Puppeteer on Vercel for reliable PDF generation | Planned |
+| **Open Local Folder** | Open all .md files recursively from a local folder | Planned |
+| **Folder Organization** | Organize local documents into folders/categories | Planned |
+| **File System Access API** | Direct file editing without import/export | Planned |
+
+#### Export & Sharing
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Server-side PDF Export** | Reliable PDF generation with Puppeteer | Planned |
+| **Image Export** | Export preview as PNG/JPEG with options | Planned |
+| **Share Links** | Generate shareable read-only links | Planned |
+
+#### Editor Enhancements
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Interactive Checklists** | Click checkboxes in preview to toggle in editor | Planned |
+| **Markdown Linting** | Real-time linting with markdownlint | Planned |
+| **Auto Formatting** | Format markdown with Prettier on save | Planned |
+| **Snippets** | Reusable text snippets with shortcuts | Planned |
+
+#### Cloud Integrations
+
+| Feature | Description | Status |
+|---------|-------------|--------|
 | **Dropbox Integration** | Sync documents with Dropbox | Planned |
 | **OneDrive Integration** | Sync documents with Microsoft OneDrive | Planned |
+| **GitLab Integration** | Support for GitLab repositories | Planned |
 | **Image Upload** | Drag & drop images, upload to cloud storage | Planned |
-| **Share Links** | Generate shareable read-only links for documents | Planned |
 
-#### Medium Priority
+#### Desktop & Platform
 
 | Feature | Description | Status |
 |---------|-------------|--------|
-| **Real-time Collaboration** | Multiple users editing the same document | Research |
-| **Desktop App (Tauri)** | Native desktop app for Windows, macOS, Linux | Planned |
-| **Advanced Export** | Export to DOCX, LaTeX, EPUB formats | Planned |
-| **Custom Templates** | User-defined document templates | Planned |
-| **Snippets** | Reusable text snippets with shortcuts | Planned |
+| **Desktop App (Tauri)** | Native app for Windows, macOS, Linux | Planned |
+| **Native File Associations** | Open .md files directly with MarkView | Planned |
+| **Auto Updates** | Automatic updates for desktop app | Planned |
 
 #### Future Enhancements
 
 | Feature | Description | Status |
 |---------|-------------|--------|
+| **Real-time Collaboration** | Multiple users editing the same document | Research |
 | **Plugin System** | Extensible architecture for custom plugins | Research |
 | **Custom Themes Editor** | Visual theme creator and customization | Planned |
 | **Vim/Emacs Keybindings** | Alternative keyboard modes | Planned |
 | **AI Writing Assistant** | Grammar, style suggestions, autocomplete | Research |
 | **Presentation Mode** | Turn markdown into slideshows | Planned |
-| **Comments & Annotations** | Inline comments for review | Research |
-| **GitLab Integration** | Support for GitLab repositories | Planned |
-| **Bitbucket Integration** | Support for Bitbucket repositories | Planned |
-| **Local File System Access** | File System Access API for direct file editing | Planned |
-| **Markdown Extensions** | Custom markdown syntax extensions | Research |
+| **Advanced Export** | Export to DOCX, LaTeX, EPUB formats | Planned |
 
 ### 💡 Feature Requests
 

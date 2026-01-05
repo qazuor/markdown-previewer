@@ -469,6 +469,35 @@ Navega a traves de los encabezados de tu documento. Haz clic en cualquier encabe
 
 ---
 
+## Proximamente
+
+Estamos trabajando activamente en nuevas funciones:
+
+### Gestion de Archivos Locales
+
+- **Abrir Carpeta Local**: Abre todos los archivos markdown recursivamente desde una carpeta
+- **Organizacion por Carpetas**: Organiza tus documentos locales en carpetas
+
+### Mejoras del Editor
+
+- **Listas de Tareas Interactivas**: Haz clic en las casillas de la vista previa para marcarlas
+- **Linting de Markdown**: Deteccion de errores en tiempo real con markdownlint
+- **Formateo Automatico**: Formatea tu markdown con Prettier
+
+### Mas Integraciones en la Nube
+
+- **Dropbox**: Sincroniza tus documentos con Dropbox
+- **OneDrive**: Sincroniza con Microsoft OneDrive
+- **GitLab**: Soporte para repositorios de GitLab
+
+### Aplicacion de Escritorio
+
+- **Aplicacion Nativa**: App basada en Tauri para Windows, macOS y Linux
+- **Asociacion de Archivos**: Abre archivos `.md` directamente con MarkView
+- **Actualizaciones Automaticas**: Actualizaciones automaticas cuando hay nuevas versiones
+
+---
+
 ## Necesitas Ayuda?
 
 - Presiona `Ctrl+/` para ver todos los atajos de teclado

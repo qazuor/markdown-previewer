@@ -469,6 +469,35 @@ Navigate through your document's headings. Click any heading to jump to that sec
 
 ---
 
+## Coming Soon
+
+We are actively working on new features:
+
+### Local File Management
+
+- **Open Local Folder**: Open all markdown files recursively from a folder
+- **Folder Organization**: Organize your local documents into folders
+
+### Editor Enhancements
+
+- **Interactive Checklists**: Click checkboxes in preview to toggle them
+- **Markdown Linting**: Real-time error detection with markdownlint
+- **Auto Formatting**: Format your markdown with Prettier
+
+### More Cloud Integrations
+
+- **Dropbox**: Sync your documents with Dropbox
+- **OneDrive**: Sync with Microsoft OneDrive
+- **GitLab**: Support for GitLab repositories
+
+### Desktop App
+
+- **Native Application**: Tauri-based app for Windows, macOS, and Linux
+- **File Associations**: Open `.md` files directly with MarkView
+- **Auto Updates**: Automatic updates when new versions are available
+
+---
+
 ## Need Help?
 
 - Press `Ctrl+/` to view all keyboard shortcuts
