@@ -11,13 +11,24 @@ import {
     VersionDiffModal,
     VersionHistoryModal
 } from '@/components/modals';
+import { ContextualHint } from '@/components/onboarding/ContextualHint';
 import { FeatureTour } from '@/components/onboarding/FeatureTour';
 import { Sidebar } from '@/components/sidebar';
 import { StatusBar } from '@/components/statusbar';
 import { TabBar } from '@/components/tabs';
 import { Toolbar } from '@/components/toolbar';
 import { DropOverlay } from '@/components/ui';
-import { useDragAndDrop, useFileImport, useGitHubSave, useGoogleDriveSave, useMobile, useOnboarding, useTheme, useZoom } from '@/hooks';
+import {
+    useContextualHints,
+    useDragAndDrop,
+    useFileImport,
+    useGitHubSave,
+    useGoogleDriveSave,
+    useMobile,
+    useOnboarding,
+    useTheme,
+    useZoom
+} from '@/hooks';
 import { usePreviewSync } from '@/hooks/useBroadcastChannel';
 import { useDocumentStore, useSettingsStore, useUIStore } from '@/stores';
 import { cn } from '@/utils/cn';
@@ -44,9 +55,13 @@ export function App() {
         completeTour,
         startTour,
         skipTour,
+        pauseTour,
         nextTourStep,
         previousTourStep
     } = useOnboarding();
+
+    // Contextual hints for first-time actions
+    const { activeHint, hintPosition, dismissHint } = useContextualHints();
 
     const documents = useDocumentStore((state) => state.documents);
     const activeDocumentId = useDocumentStore((state) => state.activeDocumentId);
@@ -476,7 +491,13 @@ export function App() {
                 onPrevious={previousTourStep}
                 onSkip={skipTour}
                 onComplete={completeTour}
+                onPause={pauseTour}
             />
+
+            {/* Contextual Hints */}
+            {activeHint && hintPosition && (
+                <ContextualHint message={t(activeHint.messageKey)} position={hintPosition} onDismiss={dismissHint} />
+            )}
         </div>
     );
 }
