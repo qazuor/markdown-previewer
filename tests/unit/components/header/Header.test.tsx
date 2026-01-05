@@ -95,11 +95,14 @@ vi.mock('lucide-react', () => ({
     Keyboard: () => <span data-testid="icon-keyboard" />,
     Menu: () => <span data-testid="icon-menu" />,
     Minus: () => <span data-testid="icon-minus" />,
+    Moon: () => <span data-testid="icon-moon" />,
+    Palette: () => <span data-testid="icon-palette" />,
     PanelLeft: () => <span data-testid="icon-panel-left" />,
     PanelRight: () => <span data-testid="icon-panel-right" />,
     Plus: () => <span data-testid="icon-plus" />,
     RotateCcw: () => <span data-testid="icon-rotate-ccw" />,
-    Settings: () => <span data-testid="icon-settings" />
+    Settings: () => <span data-testid="icon-settings" />,
+    Sun: () => <span data-testid="icon-sun" />
 }));
 
 describe('Header', () => {

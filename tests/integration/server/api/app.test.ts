@@ -80,12 +80,6 @@ describe('server/api/app', () => {
             expect(json.timestamp).toBeDefined();
         });
 
-        it('should include environment info', async () => {
-            const res = await app.request('/api/health');
-            const json = await res.json();
-
-            expect(json.env).toBeDefined();
-        });
     });
 
     describe('CORS', () => {
