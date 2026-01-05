@@ -5,6 +5,7 @@ const STORAGE_KEY = 'markview:onboarding';
 interface OnboardingState {
     hasSeenOnboarding: boolean;
     hasSeenTour: boolean;
+    pausedTourStep: number | null;
 }
 
 /**
@@ -14,6 +15,7 @@ export function useOnboarding() {
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [showTour, setShowTour] = useState(false);
     const [currentTourStep, setCurrentTourStep] = useState(0);
+    const [hasPausedTour, setHasPausedTour] = useState(false);
 
     // Load onboarding state from localStorage
     useEffect(() => {
@@ -24,6 +26,10 @@ export function useOnboarding() {
                 // Only show onboarding if user hasn't seen it
                 if (!state.hasSeenOnboarding) {
                     setShowOnboarding(true);
+                }
+                // Check if there's a paused tour
+                if (state.pausedTourStep !== null && state.pausedTourStep !== undefined) {
+                    setHasPausedTour(true);
                 }
             } else {
                 // First time user
@@ -106,6 +112,49 @@ export function useOnboarding() {
     }, [completeTour]);
 
     /**
+     * Pause the tour for later
+     */
+    const pauseTour = useCallback(() => {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            const state: OnboardingState = stored
+                ? JSON.parse(stored)
+                : { hasSeenOnboarding: true, hasSeenTour: false, pausedTourStep: null };
+
+            state.pausedTourStep = currentTourStep;
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            setShowTour(false);
+            setHasPausedTour(true);
+        } catch (error) {
+            console.error('Failed to pause tour:', error);
+        }
+    }, [currentTourStep]);
+
+    /**
+     * Resume a paused tour
+     */
+    const resumeTour = useCallback(() => {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const state: OnboardingState = JSON.parse(stored);
+                if (state.pausedTourStep !== null && state.pausedTourStep !== undefined) {
+                    setCurrentTourStep(state.pausedTourStep);
+                    setShowTour(true);
+
+                    // Clear the paused step
+                    state.pausedTourStep = null;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                    setHasPausedTour(false);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to resume tour:', error);
+        }
+    }, []);
+
+    /**
      * Move to next tour step
      */
     const nextTourStep = useCallback(() => {
@@ -123,11 +172,14 @@ export function useOnboarding() {
         showOnboarding,
         showTour,
         currentTourStep,
+        hasPausedTour,
         completeOnboarding,
         completeTour,
         resetOnboarding,
         startTour,
         skipTour,
+        pauseTour,
+        resumeTour,
         nextTourStep,
         previousTourStep
     };

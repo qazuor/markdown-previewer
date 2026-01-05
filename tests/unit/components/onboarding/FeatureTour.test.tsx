@@ -14,6 +14,13 @@ vi.mock('lucide-react', () => ({
     ArrowRight: () => <span data-testid="icon-arrow-right" />,
     ChevronLeft: () => <span data-testid="icon-chevron-left" />,
     ChevronRight: () => <span data-testid="icon-chevron-right" />,
+    Cloud: () => <span data-testid="icon-cloud" />,
+    Code: () => <span data-testid="icon-code" />,
+    Eye: () => <span data-testid="icon-eye" />,
+    LayoutDashboard: () => <span data-testid="icon-layout-dashboard" />,
+    PanelLeft: () => <span data-testid="icon-panel-left" />,
+    Timer: () => <span data-testid="icon-timer" />,
+    Wrench: () => <span data-testid="icon-wrench" />,
     X: () => <span data-testid="icon-x" />
 }));
 
@@ -29,11 +36,13 @@ describe('FeatureTour', () => {
         onNext: vi.fn(),
         onPrevious: vi.fn(),
         onSkip: vi.fn(),
-        onComplete: vi.fn()
+        onComplete: vi.fn(),
+        onPause: vi.fn()
     };
 
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.useFakeTimers();
         // Mock getBoundingClientRect for elements
         Element.prototype.getBoundingClientRect = vi.fn(() => ({
             x: 100,
@@ -46,6 +55,10 @@ describe('FeatureTour', () => {
             left: 100,
             toJSON: () => ({})
         }));
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
     });
 
     describe('rendering', () => {
@@ -139,18 +152,20 @@ describe('FeatureTour', () => {
     });
 
     describe('navigation', () => {
-        it('should call onNext when next button is clicked', () => {
+        it('should call onNext when next button is clicked', async () => {
             render(<FeatureTour {...defaultProps} currentStep={0} />);
 
             fireEvent.click(screen.getByText('common.next'));
+            await vi.runAllTimersAsync();
 
             expect(defaultProps.onNext).toHaveBeenCalled();
         });
 
-        it('should call onPrevious when previous button is clicked', () => {
+        it('should call onPrevious when previous button is clicked', async () => {
             render(<FeatureTour {...defaultProps} currentStep={1} />);
 
             fireEvent.click(screen.getByLabelText('common.previous'));
+            await vi.runAllTimersAsync();
 
             expect(defaultProps.onPrevious).toHaveBeenCalled();
         });
@@ -185,6 +200,14 @@ describe('FeatureTour', () => {
             fireEvent.click(screen.getByText('tour.finish'));
 
             expect(defaultProps.onNext).not.toHaveBeenCalled();
+        });
+
+        it('should call onPause when pause button is clicked', () => {
+            render(<FeatureTour {...defaultProps} />);
+
+            fireEvent.click(screen.getByText('tour.pauseForLater'));
+
+            expect(defaultProps.onPause).toHaveBeenCalled();
         });
     });
 
