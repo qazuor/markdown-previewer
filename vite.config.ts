@@ -7,7 +7,7 @@ export default defineConfig({
     plugins: [
         react(),
         VitePWA({
-            registerType: 'autoUpdate',
+            registerType: 'prompt',
             includeAssets: ['favicon.svg', 'robots.txt', 'sitemap.xml'],
             manifest: {
                 name: 'MarkView - Modern Markdown Editor',
@@ -125,8 +125,8 @@ export default defineConfig({
                 ],
                 // Clean up old caches
                 cleanupOutdatedCaches: true,
-                // Skip waiting to activate new service worker immediately
-                skipWaiting: true,
+                // Let the user control when to activate new service worker
+                // skipWaiting is handled by usePWA hook via messageSkipWaiting()
                 clientsClaim: true
             },
             devOptions: {
