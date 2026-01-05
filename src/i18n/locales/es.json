@@ -530,33 +530,51 @@
         "getStarted": "Comenzar",
         "startTour": "Iniciar Recorrido"
     },
+    "hints": {
+        "heading": "Usa # para encabezados. ## para H2, ### para H3, y así sucesivamente.",
+        "bold": "Consejo: ¡Ctrl+B es más rápido para negrita!",
+        "link": "Consejo: ¡Ctrl+K inserta enlaces rápidamente!",
+        "code": "Especifica el lenguaje después de ``` para resaltado de sintaxis, ej. ```javascript",
+        "list": "Usa - o * para viñetas, 1. para listas numeradas",
+        "image": "Consejo: ¡Ctrl+Shift+I inserta imágenes rápidamente!",
+        "table": "Las tablas usan | para separar columnas y - para encabezados",
+        "dismiss": "Entendido"
+    },
     "tour": {
         "editor": {
             "title": "Editor",
-            "description": "Aquí es donde escribes tu Markdown. Usa la barra de herramientas arriba para formato rápido o escribe la sintaxis de Markdown directamente."
+            "description": "Aquí es donde escribes tu Markdown. Usa la barra de herramientas arriba para formato rápido o escribe la sintaxis de Markdown directamente.",
+            "tip": "Prueba escribir # seguido de un espacio para crear un encabezado"
         },
         "preview": {
             "title": "Vista Previa",
-            "description": "Ve tu contenido formateado aquí en tiempo real. La vista previa se actualiza mientras escribes y soporta resaltado de código, diagramas y matemáticas."
+            "description": "Ve tu contenido formateado aquí en tiempo real. La vista previa se actualiza mientras escribes y soporta resaltado de código, diagramas y matemáticas.",
+            "tip": "La vista previa se sincroniza con tu posición de scroll"
         },
         "toolbar": {
             "title": "Barra de Herramientas",
-            "description": "Acceso rápido a opciones de formato comunes. Haz clic en cualquier botón para insertar sintaxis de Markdown en la posición del cursor."
+            "description": "Acceso rápido a opciones de formato comunes. Haz clic en cualquier botón para insertar sintaxis de Markdown en la posición del cursor.",
+            "tip": "Pasa el cursor sobre los botones para ver los atajos de teclado"
         },
         "sidebar": {
             "title": "Barra Lateral",
-            "description": "Accede a tus archivos, tabla de contenidos y búsqueda desde aquí. Cambia entre secciones usando las pestañas en la parte superior."
+            "description": "Accede a tus archivos, tabla de contenidos y búsqueda desde aquí. Cambia entre secciones usando las pestañas en la parte superior.",
+            "tip": "Presiona Ctrl+B para mostrar/ocultar la barra lateral"
         },
         "cloud": {
             "title": "Integración con la Nube",
-            "description": "Conecta con GitHub y Google Drive desde Configuración > Sincronización. Explora, abre, edita y guarda archivos directamente en tu almacenamiento en la nube."
+            "description": "Conecta con GitHub y Google Drive desde Configuración > Sincronización. Explora, abre, edita y guarda archivos directamente en tu almacenamiento en la nube.",
+            "tip": "Inicia sesión para habilitar las funciones en la nube"
         },
         "statusbar": {
             "title": "Barra de Estado",
-            "description": "Ve las estadísticas del documento como conteo de palabras, caracteres y tiempo estimado de lectura."
+            "description": "Ve las estadísticas del documento como conteo de palabras, caracteres y tiempo estimado de lectura.",
+            "tip": "Haz clic en el zoom para ajustar el tamaño de vista"
         },
         "skip": "Saltar Recorrido",
-        "finish": "Finalizar Recorrido"
+        "finish": "Finalizar Recorrido",
+        "pauseForLater": "Continuar después",
+        "resumeTour": "Continuar recorrido"
     },
     "help": {
         "shortcuts": "Atajos de Teclado",

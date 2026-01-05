@@ -530,33 +530,51 @@
         "getStarted": "Get Started",
         "startTour": "Start Tour"
     },
+    "hints": {
+        "heading": "Use # for headings. ## for H2, ### for H3, and so on.",
+        "bold": "Tip: Ctrl+B is faster for bold text!",
+        "link": "Tip: Ctrl+K inserts links quickly!",
+        "code": "Specify the language after ``` for syntax highlighting, e.g. ```javascript",
+        "list": "Use - or * for bullets, 1. for numbered lists",
+        "image": "Tip: Ctrl+Shift+I inserts images quickly!",
+        "table": "Tables use | to separate columns and - for headers",
+        "dismiss": "Got it"
+    },
     "tour": {
         "editor": {
             "title": "Editor",
-            "description": "This is where you write your Markdown. Use the toolbar above for quick formatting or type Markdown syntax directly."
+            "description": "This is where you write your Markdown. Use the toolbar above for quick formatting or type Markdown syntax directly.",
+            "tip": "Try typing # followed by a space to create a heading"
         },
         "preview": {
             "title": "Preview",
-            "description": "See your formatted content here in real-time. The preview updates as you type and supports code highlighting, diagrams, and math."
+            "description": "See your formatted content here in real-time. The preview updates as you type and supports code highlighting, diagrams, and math.",
+            "tip": "The preview syncs with your scroll position"
         },
         "toolbar": {
             "title": "Toolbar",
-            "description": "Quick access to common formatting options. Click any button to insert Markdown syntax at your cursor position."
+            "description": "Quick access to common formatting options. Click any button to insert Markdown syntax at your cursor position.",
+            "tip": "Hover over buttons to see keyboard shortcuts"
         },
         "sidebar": {
             "title": "Sidebar",
-            "description": "Access your files, table of contents, and search from here. Switch between sections using the tabs at the top."
+            "description": "Access your files, table of contents, and search from here. Switch between sections using the tabs at the top.",
+            "tip": "Press Ctrl+B to toggle the sidebar"
         },
         "cloud": {
             "title": "Cloud Integration",
-            "description": "Connect to GitHub and Google Drive from Settings > Sync. Browse, open, edit, and save files directly to your cloud storage."
+            "description": "Connect to GitHub and Google Drive from Settings > Sync. Browse, open, edit, and save files directly to your cloud storage.",
+            "tip": "Sign in to enable cloud features"
         },
         "statusbar": {
             "title": "Status Bar",
-            "description": "See document statistics like word count, character count, and estimated reading time."
+            "description": "See document statistics like word count, character count, and estimated reading time.",
+            "tip": "Click on zoom to adjust the view size"
         },
         "skip": "Skip Tour",
-        "finish": "Finish Tour"
+        "finish": "Finish Tour",
+        "pauseForLater": "Continue later",
+        "resumeTour": "Resume tour"
     },
     "help": {
         "shortcuts": "Keyboard Shortcuts",
