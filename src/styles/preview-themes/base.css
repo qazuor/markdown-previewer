@@ -69,6 +69,25 @@
     padding-left: 2em;
 }
 
+.preview-content ul {
+    list-style-type: disc;
+}
+
+.preview-content ol {
+    list-style-type: decimal;
+}
+
+.preview-content ul ul,
+.preview-content ol ul {
+    list-style-type: circle;
+}
+
+.preview-content ul ul ul,
+.preview-content ol ul ul,
+.preview-content ol ol ul {
+    list-style-type: square;
+}
+
 .preview-content li {
     margin-bottom: 0.25em;
 }
