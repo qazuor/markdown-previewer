@@ -1,9 +1,10 @@
 import { zValidator } from '@hono/zod-validator';
 import type { Session, User } from 'better-auth';
-import { and, eq, gt, isNull, or } from 'drizzle-orm';
+import { and, eq, gt, isNull, or, sql } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { db, documents, folders } from '../../db';
+import { db, documents, folders, userSessionState } from '../../db';
+import { connectionManager } from '../../sse/connectionManager';
 import { getAuthUser } from '../middleware/auth';
 
 type Variables = {
@@ -37,7 +38,9 @@ const documentSchema = z.object({
         })
         .nullable()
         .optional(),
-    syncVersion: z.number().optional()
+    syncVersion: z.number().optional(),
+    // Add client timestamp for better conflict detection
+    clientUpdatedAt: z.string().optional()
 });
 
 const folderSchema = z.object({
@@ -47,6 +50,72 @@ const folderSchema = z.object({
     color: z.string().nullable().optional(),
     sortOrder: z.number().optional()
 });
+
+const sessionStateSchema = z.object({
+    openDocumentIds: z.array(z.string()),
+    activeDocumentId: z.string().nullable()
+});
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/**
+ * Update session state to include a document ID and broadcast the change
+ */
+async function addDocumentToSessionState(
+    userId: string,
+    documentId: string,
+    deviceId: string | undefined
+): Promise<void> {
+    try {
+        const existing = await db.query.userSessionState.findFirst({
+            where: eq(userSessionState.userId, userId)
+        });
+
+        let newOpenDocumentIds: string[];
+
+        if (existing) {
+            // Add document to list if not already present
+            if (!existing.openDocumentIds.includes(documentId)) {
+                newOpenDocumentIds = [...existing.openDocumentIds, documentId];
+                await db
+                    .update(userSessionState)
+                    .set({
+                        openDocumentIds: newOpenDocumentIds,
+                        updatedAt: new Date()
+                    })
+                    .where(eq(userSessionState.userId, userId));
+            } else {
+                newOpenDocumentIds = existing.openDocumentIds;
+            }
+        } else {
+            // Create new session state
+            newOpenDocumentIds = [documentId];
+            await db.insert(userSessionState).values({
+                id: crypto.randomUUID(),
+                userId,
+                openDocumentIds: newOpenDocumentIds,
+                activeDocumentId: documentId,
+                updatedAt: new Date()
+            });
+        }
+
+        // Broadcast session update to other devices
+        connectionManager.broadcast(
+            userId,
+            'session:updated',
+            {
+                openDocumentIds: newOpenDocumentIds,
+                activeDocumentId: existing?.activeDocumentId ?? documentId,
+                updatedAt: new Date().toISOString()
+            },
+            deviceId
+        );
+    } catch (error) {
+        console.error('[Sync] Failed to update session state:', error);
+    }
+}
 
 // ============================================================================
 // Document Routes
@@ -81,6 +150,7 @@ syncRoutes.put('/documents/:id', zValidator('json', documentSchema), async (c) =
     const user = getAuthUser(c);
     const docId = c.req.param('id');
     const data = c.req.valid('json');
+    const deviceId = c.req.header('X-Device-Id');
 
     // Check if document exists
     const existing = await db.query.documents.findFirst({
@@ -88,20 +158,36 @@ syncRoutes.put('/documents/:id', zValidator('json', documentSchema), async (c) =
     });
 
     if (existing) {
-        // Check for conflict
-        if (data.syncVersion && existing.syncVersion > data.syncVersion) {
-            return c.json(
-                {
-                    error: 'Conflict',
-                    message: 'Document has been modified on server',
-                    serverVersion: existing.syncVersion,
-                    serverDocument: existing
-                },
-                409
-            );
+        // Conflict detection strategy:
+        // Only reject if server has a NEWER version AND the content is different
+        // This allows rapid edits from the same client to succeed
+        const clientVersion = data.syncVersion ?? 0;
+        const serverVersion = existing.syncVersion;
+
+        // Real conflict: server version is ahead AND this is not from the same edit session
+        // We use a tolerance window - if versions are within 2, allow it (likely rapid edits)
+        const versionDifference = serverVersion - clientVersion;
+        const isSignificantConflict = versionDifference > 2;
+
+        if (isSignificantConflict) {
+            // Check if content actually differs (avoid false conflicts)
+            if (existing.content !== data.content) {
+                console.log(`[Sync] Conflict detected for document ${docId}: server v${serverVersion} vs client v${clientVersion}`);
+                return c.json(
+                    {
+                        error: 'Conflict',
+                        message: 'Document has been modified on another device',
+                        serverVersion: existing.syncVersion,
+                        serverDocument: existing
+                    },
+                    409
+                );
+            }
+            // Content is the same, just update metadata and version
+            console.log(`[Sync] Version mismatch but content identical for ${docId}, accepting update`);
         }
 
-        // Update existing
+        // Update existing document
         const [updated] = await db
             .update(documents)
             .set({
@@ -111,7 +197,7 @@ syncRoutes.put('/documents/:id', zValidator('json', documentSchema), async (c) =
                 isManuallyNamed: data.isManuallyNamed ?? existing.isManuallyNamed,
                 cursor: data.cursor,
                 scroll: data.scroll,
-                syncVersion: existing.syncVersion + 1,
+                syncVersion: serverVersion + 1,
                 updatedAt: new Date(),
                 syncedAt: new Date(),
                 deletedAt: null // Restore if was deleted
@@ -119,10 +205,24 @@ syncRoutes.put('/documents/:id', zValidator('json', documentSchema), async (c) =
             .where(and(eq(documents.id, docId), eq(documents.userId, user.id)))
             .returning();
 
+        // Notify other devices via SSE
+        if (updated) {
+            connectionManager.broadcast(
+                user.id,
+                'document:updated',
+                {
+                    documentId: docId,
+                    syncVersion: updated.syncVersion,
+                    updatedAt: updated.updatedAt?.toISOString()
+                },
+                deviceId
+            );
+        }
+
         return c.json({ document: updated });
     }
 
-    // Create new
+    // Create new document
     const [created] = await db
         .insert(documents)
         .values({
@@ -139,6 +239,24 @@ syncRoutes.put('/documents/:id', zValidator('json', documentSchema), async (c) =
         })
         .returning();
 
+    if (created) {
+        // Notify other devices about the new document
+        connectionManager.broadcast(
+            user.id,
+            'document:updated',
+            {
+                documentId: docId,
+                syncVersion: created.syncVersion,
+                updatedAt: created.updatedAt?.toISOString(),
+                isNew: true // Flag to indicate this is a new document
+            },
+            deviceId
+        );
+
+        // Also update session state to include this document and notify other devices
+        await addDocumentToSessionState(user.id, docId, deviceId);
+    }
+
     return c.json({ document: created }, 201);
 });
 
@@ -146,17 +264,14 @@ syncRoutes.put('/documents/:id', zValidator('json', documentSchema), async (c) =
 syncRoutes.delete('/documents/:id', async (c) => {
     const user = getAuthUser(c);
     const docId = c.req.param('id');
+    const deviceId = c.req.header('X-Device-Id');
 
     const [deleted] = await db
         .update(documents)
         .set({
             deletedAt: new Date(),
             updatedAt: new Date(),
-            syncVersion: db
-                .select({ v: documents.syncVersion })
-                .from(documents)
-                .where(eq(documents.id, docId))
-                .limit(1) as unknown as number
+            syncVersion: sql`${documents.syncVersion} + 1`
         })
         .where(and(eq(documents.id, docId), eq(documents.userId, user.id), isNull(documents.deletedAt)))
         .returning();
@@ -164,6 +279,9 @@ syncRoutes.delete('/documents/:id', async (c) => {
     if (!deleted) {
         return c.json({ error: 'Document not found' }, 404);
     }
+
+    // Notify other devices via SSE
+    connectionManager.broadcast(user.id, 'document:deleted', { documentId: docId }, deviceId);
 
     return c.json({ success: true, document: deleted });
 });
@@ -197,6 +315,7 @@ syncRoutes.put('/folders/:id', zValidator('json', folderSchema), async (c) => {
     const user = getAuthUser(c);
     const folderId = c.req.param('id');
     const data = c.req.valid('json');
+    const deviceId = c.req.header('X-Device-Id');
 
     // Check if folder exists
     const existing = await db.query.folders.findFirst({
@@ -218,6 +337,16 @@ syncRoutes.put('/folders/:id', zValidator('json', folderSchema), async (c) => {
             .where(and(eq(folders.id, folderId), eq(folders.userId, user.id)))
             .returning();
 
+        // Notify other devices via SSE
+        if (updated) {
+            connectionManager.broadcast(
+                user.id,
+                'folder:updated',
+                { folderId, updatedAt: updated.updatedAt?.toISOString() },
+                deviceId
+            );
+        }
+
         return c.json({ folder: updated });
     }
 
@@ -234,6 +363,16 @@ syncRoutes.put('/folders/:id', zValidator('json', folderSchema), async (c) => {
         })
         .returning();
 
+    // Notify other devices via SSE
+    if (created) {
+        connectionManager.broadcast(
+            user.id,
+            'folder:updated',
+            { folderId, updatedAt: created.updatedAt?.toISOString() },
+            deviceId
+        );
+    }
+
     return c.json({ folder: created }, 201);
 });
 
@@ -241,6 +380,7 @@ syncRoutes.put('/folders/:id', zValidator('json', folderSchema), async (c) => {
 syncRoutes.delete('/folders/:id', async (c) => {
     const user = getAuthUser(c);
     const folderId = c.req.param('id');
+    const deviceId = c.req.header('X-Device-Id');
 
     const [deleted] = await db
         .update(folders)
@@ -254,6 +394,9 @@ syncRoutes.delete('/folders/:id', async (c) => {
     if (!deleted) {
         return c.json({ error: 'Folder not found' }, 404);
     }
+
+    // Notify other devices via SSE
+    connectionManager.broadcast(user.id, 'folder:deleted', { folderId }, deviceId);
 
     return c.json({ success: true, folder: deleted });
 });
@@ -280,6 +423,95 @@ syncRoutes.get('/status', async (c) => {
         documentsCount: docCount?.count || 0,
         foldersCount: folderCount?.count || 0,
         timestamp: new Date().toISOString()
+    });
+});
+
+// ============================================================================
+// Session State Routes
+// ============================================================================
+
+// GET /api/sync/session - Get current session state (open documents, active document)
+syncRoutes.get('/session', async (c) => {
+    const user = getAuthUser(c);
+
+    const sessionState = await db.query.userSessionState.findFirst({
+        where: eq(userSessionState.userId, user.id)
+    });
+
+    if (!sessionState) {
+        return c.json({
+            openDocumentIds: [],
+            activeDocumentId: null,
+            updatedAt: null
+        });
+    }
+
+    return c.json({
+        openDocumentIds: sessionState.openDocumentIds,
+        activeDocumentId: sessionState.activeDocumentId,
+        updatedAt: sessionState.updatedAt?.toISOString()
+    });
+});
+
+// PUT /api/sync/session - Update session state
+syncRoutes.put('/session', zValidator('json', sessionStateSchema), async (c) => {
+    const user = getAuthUser(c);
+    const data = c.req.valid('json');
+    const deviceId = c.req.header('X-Device-Id');
+
+    // Check if session state exists
+    const existing = await db.query.userSessionState.findFirst({
+        where: eq(userSessionState.userId, user.id)
+    });
+
+    let result;
+    if (existing) {
+        // Update existing
+        const [updated] = await db
+            .update(userSessionState)
+            .set({
+                openDocumentIds: data.openDocumentIds,
+                activeDocumentId: data.activeDocumentId,
+                updatedAt: new Date()
+            })
+            .where(eq(userSessionState.userId, user.id))
+            .returning();
+        result = updated;
+    } else {
+        // Create new
+        const [created] = await db
+            .insert(userSessionState)
+            .values({
+                id: crypto.randomUUID(),
+                userId: user.id,
+                openDocumentIds: data.openDocumentIds,
+                activeDocumentId: data.activeDocumentId,
+                updatedAt: new Date()
+            })
+            .returning();
+        result = created;
+    }
+
+    if (!result) {
+        return c.json({ error: 'Failed to update session state' }, 500);
+    }
+
+    // Notify other devices via SSE
+    connectionManager.broadcast(
+        user.id,
+        'session:updated',
+        {
+            openDocumentIds: result.openDocumentIds,
+            activeDocumentId: result.activeDocumentId,
+            updatedAt: result.updatedAt?.toISOString()
+        },
+        deviceId
+    );
+
+    return c.json({
+        openDocumentIds: result.openDocumentIds,
+        activeDocumentId: result.activeDocumentId,
+        updatedAt: result.updatedAt?.toISOString()
     });
 });
 
