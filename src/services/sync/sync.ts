@@ -298,9 +298,15 @@ async function processQueueItem(item: SyncQueueItem): Promise<void> {
 
                 console.log('[Sync] Sending document with syncVersion:', latestSyncVersion);
                 const response = await syncApi.documents.upsert(updatedPayload);
+
                 // Update server documents cache with the response
                 syncStore.updateServerDocument(response.document);
-                // Broadcast the updated document to sync between tabs
+
+                // CRITICAL: Also update the local documentStore with the new syncVersion
+                // This ensures subsequent edits use the correct version
+                updateLocalDocumentSyncVersion(response.document.id, response.document.syncVersion, response.document.updatedAt);
+
+                // Broadcast the updated document to sync between OTHER tabs
                 broadcastDocumentUpdate(response.document);
             } else {
                 const response = await syncApi.folders.upsert(item.data as SyncFolder);
@@ -319,6 +325,31 @@ async function processQueueItem(item: SyncQueueItem): Promise<void> {
             }
             break;
         }
+    }
+}
+
+/**
+ * Update the local document store with new syncVersion after successful sync
+ */
+function updateLocalDocumentSyncVersion(documentId: string, syncVersion: number, updatedAt: string | null): void {
+    const documentStore = useDocumentStore.getState();
+    const doc = documentStore.documents.get(documentId);
+
+    if (doc) {
+        console.log(`[Sync] Updating local document ${documentId} syncVersion: ${doc.syncVersion ?? 0} -> ${syncVersion}`);
+        useDocumentStore.setState((state) => {
+            const newDocs = new Map(state.documents);
+            const currentDoc = newDocs.get(documentId);
+            if (currentDoc) {
+                newDocs.set(documentId, {
+                    ...currentDoc,
+                    syncVersion,
+                    syncedAt: updatedAt ? new Date(updatedAt) : new Date(),
+                    syncStatus: 'synced'
+                });
+            }
+            return { documents: newDocs };
+        });
     }
 }
 

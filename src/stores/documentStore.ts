@@ -39,6 +39,20 @@ function computeSyncStatus(doc: Document, newContent: string): SyncStatus {
     return 'synced';
 }
 
+/**
+ * Server document data for synced documents
+ */
+export interface SyncedDocumentData {
+    id: string;
+    name: string;
+    content: string;
+    folderId?: string | null;
+    syncVersion?: number;
+    syncedAt?: Date | null;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
 interface DocumentState {
     documents: Map<string, Document>;
     activeDocumentId: string | null;
@@ -47,6 +61,7 @@ interface DocumentState {
 
     // Document operations
     createDocument: (options?: CreateDocumentOptions) => string;
+    addSyncedDocument: (data: SyncedDocumentData, makeActive?: boolean) => void;
     findDocumentByGitHub: (repo: string, path: string) => Document | undefined;
     findDocumentByDrive: (fileId: string) => Document | undefined;
     openDocument: (id: string) => void;
@@ -175,6 +190,80 @@ export const useDocumentStore = create<DocumentState>()(
                         return { documents: newDocs, activeDocumentId: doc.id };
                     });
                     return doc.id;
+                },
+
+                addSyncedDocument: (data, makeActive = false) => {
+                    // Check if document already exists
+                    const existing = get().documents.get(data.id);
+                    if (existing) {
+                        const serverVersion = data.syncVersion ?? 0;
+                        const localVersion = existing.syncVersion ?? 0;
+
+                        // Update if:
+                        // 1. Server version is newer, OR
+                        // 2. Local has no version (never synced) and server has content
+                        // 3. Content is different (force sync)
+                        const shouldUpdate =
+                            serverVersion > localVersion || (localVersion === 0 && serverVersion > 0) || existing.content !== data.content;
+
+                        if (shouldUpdate) {
+                            console.log(`[DocumentStore] Updating document ${data.id}: local v${localVersion} -> server v${serverVersion}`);
+                            set((state) => {
+                                const currentDoc = state.documents.get(data.id);
+                                if (!currentDoc) return state;
+
+                                const newDocs = new Map(state.documents);
+                                newDocs.set(data.id, {
+                                    ...currentDoc,
+                                    name: data.name,
+                                    content: data.content,
+                                    folderId: data.folderId,
+                                    syncVersion: data.syncVersion,
+                                    syncedAt: data.syncedAt,
+                                    syncStatus: 'synced',
+                                    updatedAt: data.updatedAt || new Date(),
+                                    originalContentHash: hashContent(data.content)
+                                });
+                                return {
+                                    documents: newDocs,
+                                    activeDocumentId: makeActive ? data.id : state.activeDocumentId
+                                };
+                            });
+                        } else {
+                            console.log(
+                                `[DocumentStore] Skipping update for ${data.id}: local v${localVersion} >= server v${serverVersion}, content unchanged`
+                            );
+                        }
+                        return;
+                    }
+
+                    // Create new document with the server ID
+                    console.log(`[DocumentStore] Adding new synced document: ${data.id} (v${data.syncVersion ?? 1})`);
+                    const doc: Document = {
+                        id: data.id,
+                        name: data.name,
+                        content: data.content,
+                        syncStatus: 'synced',
+                        isManuallyNamed: true,
+                        source: 'local',
+                        cursor: { line: 1, column: 1 },
+                        scroll: { line: 1, percentage: 0 },
+                        createdAt: data.createdAt || new Date(),
+                        updatedAt: data.updatedAt || new Date(),
+                        folderId: data.folderId,
+                        syncVersion: data.syncVersion,
+                        syncedAt: data.syncedAt,
+                        originalContentHash: hashContent(data.content)
+                    };
+
+                    set((state) => {
+                        const newDocs = new Map(state.documents);
+                        newDocs.set(doc.id, doc);
+                        return {
+                            documents: newDocs,
+                            activeDocumentId: makeActive ? doc.id : state.activeDocumentId
+                        };
+                    });
                 },
 
                 findDocumentByGitHub: (repo, path) => {
