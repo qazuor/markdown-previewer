@@ -43,7 +43,8 @@
         "selectAll": "Seleccionar Todo",
         "deselectAll": "Deseleccionar Todo",
         "done": "Hecho",
-        "back": "Atrás"
+        "back": "Atrás",
+        "create": "Crear"
     },
     "aria": {
         "editorStatus": "Estado del editor",
@@ -619,7 +620,7 @@
     "fileExplorer": {
         "filterPlaceholder": "Filtrar archivos...",
         "noMatchingFiles": "Sin archivos coincidentes",
-        "localFiles": "ARCHIVOS LOCALES",
+        "documents": "DOCUMENTOS",
         "source": {
             "local": "Archivo local",
             "github": "GitHub",
@@ -632,6 +633,21 @@
             "syncing": "Sincronizando...",
             "cloudPending": "Guardado local, pendiente sincronizar",
             "error": "Error de sincronización"
+        },
+        "folder": {
+            "new": "Nueva Carpeta",
+            "name": "Nombre de Carpeta",
+            "namePlaceholder": "Ingresa el nombre de la carpeta",
+            "rename": "Renombrar Carpeta",
+            "delete": "Eliminar Carpeta",
+            "deleteConfirm": "¿Eliminar carpeta \"{{name}}\"? Los documentos se moverán a la raíz.",
+            "moveTo": "Mover a Carpeta",
+            "moveToRoot": "Mover a Raíz",
+            "noFolders": "Sin carpetas aún",
+            "createFirst": "Crea tu primera carpeta para organizar documentos",
+            "color": "Color",
+            "noColor": "Sin color",
+            "icon": "Icono"
         }
     },
     "auth": {

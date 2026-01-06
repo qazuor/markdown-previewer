@@ -12,6 +12,7 @@ vi.mock('react-i18next', () => ({
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
     FilePlus: () => <span data-testid="icon-file-plus" />,
+    FolderPlus: () => <span data-testid="icon-folder-plus" />,
     Import: () => <span data-testid="icon-import" />
 }));
 
@@ -24,7 +25,16 @@ vi.mock('@/components/ui', () => ({
         <button type="button" data-testid="context-menu-item" onClick={onClick}>
             {children}
         </button>
-    )
+    ),
+    ContextMenuSeparator: () => <hr data-testid="context-menu-separator" />
+}));
+
+// Mock uiStore
+vi.mock('@/stores/uiStore', () => ({
+    useUIStore: (selector: (state: unknown) => unknown) => {
+        const state = { openNewFolderModal: vi.fn() };
+        return selector(state);
+    }
 }));
 
 describe('LocalFilesContextMenu', () => {
@@ -128,7 +138,7 @@ describe('LocalFilesContextMenu', () => {
     });
 
     describe('menu items', () => {
-        it('should have two menu items', () => {
+        it('should have three menu items', () => {
             render(
                 <LocalFilesContextMenu {...defaultProps}>
                     <div>Children</div>
@@ -136,7 +146,7 @@ describe('LocalFilesContextMenu', () => {
             );
 
             const menuItems = screen.getAllByTestId('context-menu-item');
-            expect(menuItems).toHaveLength(2);
+            expect(menuItems).toHaveLength(3);
         });
     });
 });

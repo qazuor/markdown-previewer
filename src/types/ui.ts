@@ -2,7 +2,7 @@ export type SidebarSection = 'explorer' | 'github' | 'gdrive';
 
 export type DocumentPanelType = 'toc' | 'search' | null;
 
-export type ModalType = 'settings' | 'shortcuts' | 'onboarding' | 'versions' | 'export' | 'about' | null;
+export type ModalType = 'settings' | 'shortcuts' | 'onboarding' | 'versions' | 'export' | 'about' | 'new-folder' | null;
 
 export type SaveStatus = 'saved' | 'saving' | 'modified' | 'error';
 
@@ -42,4 +42,7 @@ export interface UIState {
 
     // Document renaming
     pendingRenameDocumentId: string | null;
+
+    // New folder modal
+    newFolderParentId: string | null;
 }

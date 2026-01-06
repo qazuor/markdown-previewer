@@ -11,8 +11,9 @@ import {
     ContextMenuTrigger
 } from '@/components/ui';
 import { useDocumentStore } from '@/stores/documentStore';
+import { useFolderStore } from '@/stores/folderStore';
 import type { Document } from '@/types';
-import { Copy, Download, FileCode, FileImage, FileText, Pencil, Trash2 } from 'lucide-react';
+import { Copy, Download, FileCode, FileImage, FileText, Folder, FolderRoot, Pencil, Trash2 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +28,9 @@ interface FileContextMenuProps {
  */
 export function FileContextMenu({ documentId, children }: FileContextMenuProps) {
     const { t } = useTranslation();
-    const { getDocument, deleteDocument, renameDocument, createDocument, documents } = useDocumentStore();
+    const { getDocument, deleteDocument, renameDocument, createDocument, documents, moveToFolder } = useDocumentStore();
+    const folders = useFolderStore((s) => s.folders);
+    const getRootFolders = useFolderStore((s) => s.getRootFolders);
     const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
 
     const handleRename = () => {
@@ -118,6 +121,31 @@ export function FileContextMenu({ documentId, children }: FileContextMenuProps) 
                         <Copy className="mr-2 h-4 w-4" />
                         {t('common.duplicate')}
                     </ContextMenuItem>
+
+                    {/* Move to Folder */}
+                    {folders.size > 0 && (
+                        <ContextMenuSub>
+                            <ContextMenuSubTrigger>
+                                <Folder className="mr-2 h-4 w-4" />
+                                {t('fileExplorer.folder.moveTo')}
+                            </ContextMenuSubTrigger>
+                            <ContextMenuSubContent>
+                                {/* Move to root */}
+                                <ContextMenuItem onClick={() => moveToFolder(documentId, null)}>
+                                    <FolderRoot className="mr-2 h-4 w-4" />
+                                    {t('fileExplorer.folder.moveToRoot')}
+                                </ContextMenuItem>
+                                <ContextMenuSeparator />
+                                {/* Render folder tree */}
+                                {getRootFolders().map((folder) => (
+                                    <ContextMenuItem key={folder.id} onClick={() => moveToFolder(documentId, folder.id)}>
+                                        <Folder className="mr-2 h-4 w-4" style={{ color: folder.color || 'currentColor' }} />
+                                        {folder.name}
+                                    </ContextMenuItem>
+                                ))}
+                            </ContextMenuSubContent>
+                        </ContextMenuSub>
+                    )}
 
                     <ContextMenuSeparator />
 

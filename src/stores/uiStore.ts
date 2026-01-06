@@ -38,6 +38,9 @@ interface UIActions {
 
     // Document renaming
     setPendingRenameDocumentId: (id: string | null) => void;
+
+    // New folder modal
+    openNewFolderModal: (parentId?: string | null) => void;
 }
 
 type UIStore = UIState & UIActions;
@@ -57,7 +60,8 @@ const initialState: UIState = {
     searchRegex: false,
     saveStatus: 'saved',
     lastSavedAt: null,
-    pendingRenameDocumentId: null
+    pendingRenameDocumentId: null,
+    newFolderParentId: null
 };
 
 export const useUIStore = create<UIStore>()(
@@ -150,6 +154,10 @@ export const useUIStore = create<UIStore>()(
 
                 setPendingRenameDocumentId: (id) => {
                     set({ pendingRenameDocumentId: id });
+                },
+
+                openNewFolderModal: (parentId) => {
+                    set({ activeModal: 'new-folder', newFolderParentId: parentId ?? null });
                 }
             }),
             {

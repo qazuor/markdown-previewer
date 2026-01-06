@@ -43,7 +43,8 @@
         "selectAll": "Select All",
         "deselectAll": "Deselect All",
         "done": "Done",
-        "back": "Back"
+        "back": "Back",
+        "create": "Create"
     },
     "aria": {
         "editorStatus": "Editor status",
@@ -619,7 +620,7 @@
     "fileExplorer": {
         "filterPlaceholder": "Filter files...",
         "noMatchingFiles": "No matching files",
-        "localFiles": "LOCAL FILES",
+        "documents": "DOCUMENTS",
         "source": {
             "local": "Local file",
             "github": "GitHub",
@@ -632,6 +633,21 @@
             "syncing": "Syncing...",
             "cloudPending": "Saved locally, pending cloud sync",
             "error": "Sync error"
+        },
+        "folder": {
+            "new": "New Folder",
+            "name": "Folder Name",
+            "namePlaceholder": "Enter folder name",
+            "rename": "Rename Folder",
+            "delete": "Delete Folder",
+            "deleteConfirm": "Delete folder \"{{name}}\"? Documents inside will be moved to root.",
+            "moveTo": "Move to Folder",
+            "moveToRoot": "Move to Root",
+            "noFolders": "No folders yet",
+            "createFirst": "Create your first folder to organize documents",
+            "color": "Color",
+            "noColor": "No color",
+            "icon": "Icon"
         }
     },
     "auth": {

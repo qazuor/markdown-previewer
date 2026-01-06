@@ -69,10 +69,13 @@ interface DocumentState {
     updateContent: (id: string, content: string) => void;
     renameDocument: (id: string, name: string, isManual?: boolean) => void;
     deleteDocument: (id: string) => void;
+    moveToFolder: (id: string, folderId: string | null) => void;
 
     // Getters
     getActiveDocument: () => Document | null;
     getDocument: (id: string) => Document | undefined;
+    getDocumentsByFolder: (folderId: string | null) => Document[];
+    getRootDocuments: () => Document[];
 
     // Version history
     saveVersion: (id: string, label?: string) => void;
@@ -383,6 +386,21 @@ export const useDocumentStore = create<DocumentState>()(
                     });
                 },
 
+                moveToFolder: (id, folderId) => {
+                    set((state) => {
+                        const doc = state.documents.get(id);
+                        if (!doc) return state;
+
+                        const newDocs = new Map(state.documents);
+                        newDocs.set(id, {
+                            ...doc,
+                            folderId: folderId,
+                            updatedAt: new Date()
+                        });
+                        return { documents: newDocs };
+                    });
+                },
+
                 getActiveDocument: () => {
                     const state = get();
                     if (!state.activeDocumentId) return null;
@@ -391,6 +409,15 @@ export const useDocumentStore = create<DocumentState>()(
 
                 getDocument: (id) => {
                     return get().documents.get(id);
+                },
+
+                getDocumentsByFolder: (folderId) => {
+                    const docs = Array.from(get().documents.values());
+                    return docs.filter((doc) => doc.folderId === folderId).sort((a, b) => a.name.localeCompare(b.name));
+                },
+
+                getRootDocuments: () => {
+                    return get().getDocumentsByFolder(null);
                 },
 
                 saveVersion: (id, label) => {

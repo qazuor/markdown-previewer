@@ -1,94 +1,57 @@
-import { EditableTabName } from '@/components/tabs/EditableTabName';
 import { IconButton, Tooltip } from '@/components/ui';
 import { useFileImport } from '@/hooks';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useUIStore } from '@/stores/uiStore';
-import type { Document, SyncStatus } from '@/types';
 import { cn } from '@/utils/cn';
-import { AlertCircle, File, FolderOpen, GitBranch, HardDrive, Loader2, Plus, Search, X } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { FolderOpen, FolderPlus, Plus, Search } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileContextMenu } from './FileContextMenu';
+import { FolderTree } from './FolderTree';
 import { LocalFilesContextMenu } from './LocalFilesContextMenu';
-
-/**
- * Get icon and color based on document source
- */
-function getSourceIcon(source: Document['source']) {
-    switch (source) {
-        case 'github':
-            return { icon: GitBranch, color: 'text-[#6e5494]', labelKey: 'fileExplorer.source.github' };
-        case 'gdrive':
-            return { icon: HardDrive, color: 'text-[#4285f4]', labelKey: 'fileExplorer.source.gdrive' };
-        default:
-            return { icon: File, color: 'text-text-muted', labelKey: 'fileExplorer.source.local' };
-    }
-}
-
-/**
- * Get sync status indicator style (using hex colors to avoid Tailwind purging)
- */
-function getSyncStatusStyle(status: SyncStatus) {
-    switch (status) {
-        case 'synced':
-        case 'local':
-            return { bgColor: '#22c55e', textColor: '#22c55e', labelKey: 'fileExplorer.status.synced', showDot: true };
-        case 'modified':
-            return { bgColor: '#f97316', textColor: '#f97316', labelKey: 'fileExplorer.status.modified', showDot: true };
-        case 'syncing':
-            return { bgColor: '#3b82f6', textColor: '#3b82f6', labelKey: 'fileExplorer.status.syncing', showDot: false };
-        case 'cloud-pending':
-            return { bgColor: '#06b6d4', textColor: '#06b6d4', labelKey: 'fileExplorer.status.cloudPending', showDot: true };
-        case 'error':
-            return { bgColor: '#ef4444', textColor: '#ef4444', labelKey: 'fileExplorer.status.error', showDot: false };
-        default:
-            return { bgColor: '#22c55e', textColor: '#22c55e', labelKey: 'fileExplorer.status.synced', showDot: true };
-    }
-}
+import { NewFolderModal } from './NewFolderModal';
 
 interface FileExplorerProps {
     className?: string;
 }
 
 /**
- * File explorer showing local and GitHub files
+ * File explorer showing documents organized in folders
  */
 export function FileExplorer({ className }: FileExplorerProps) {
     const { t } = useTranslation();
-    const { documents, activeDocumentId, openDocument, createDocument, closeDocument } = useDocumentStore();
+    const createDocument = useDocumentStore((s) => s.createDocument);
     const setPendingRenameDocumentId = useUIStore((s) => s.setPendingRenameDocumentId);
+    const openNewFolderModal = useUIStore((s) => s.openNewFolderModal);
     const { openFileDialog } = useFileImport();
     const [filter, setFilter] = useState('');
 
-    const filteredDocuments = useMemo(() => {
-        const docs = Array.from(documents.values());
-        if (!filter) return docs;
-
-        const lowerFilter = filter.toLowerCase();
-        return docs.filter((doc) => doc.name.toLowerCase().includes(lowerFilter));
-    }, [documents, filter]);
-
-    const handleNewFile = () => {
+    const handleNewFile = useCallback(() => {
         const id = createDocument();
         setPendingRenameDocumentId(id);
-    };
+    }, [createDocument, setPendingRenameDocumentId]);
 
-    const handleCloseDocument = useCallback(
-        (e: React.MouseEvent, docId: string) => {
-            e.stopPropagation();
-            closeDocument(docId);
-        },
-        [closeDocument]
-    );
+    const handleNewFolder = useCallback(() => {
+        openNewFolderModal(null);
+    }, [openNewFolderModal]);
 
     return (
         <div className={cn('flex flex-col h-full', className)}>
             {/* Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-border">
                 <span className="text-xs font-semibold uppercase text-text-muted">{t('sidebar.explorer')}</span>
-                <Tooltip content={t('common.new')}>
-                    <IconButton icon={<Plus className="h-4 w-4" />} label={t('common.new')} onClick={handleNewFile} size="sm" />
-                </Tooltip>
+                <div className="flex items-center gap-1">
+                    <Tooltip content={t('fileExplorer.folder.new')}>
+                        <IconButton
+                            icon={<FolderPlus className="h-4 w-4" />}
+                            label={t('fileExplorer.folder.new')}
+                            onClick={handleNewFolder}
+                            size="sm"
+                        />
+                    </Tooltip>
+                    <Tooltip content={t('common.new')}>
+                        <IconButton icon={<Plus className="h-4 w-4" />} label={t('common.new')} onClick={handleNewFile} size="sm" />
+                    </Tooltip>
+                </div>
             </div>
 
             {/* Search filter */}
@@ -111,116 +74,25 @@ export function FileExplorer({ className }: FileExplorerProps) {
                 </div>
             </div>
 
-            {/* Local files section */}
+            {/* Documents section */}
             <LocalFilesContextMenu onNewDocument={handleNewFile} onImport={openFileDialog}>
                 <div className="flex-1 overflow-y-auto">
                     <div className="px-2 py-1">
                         <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-text-muted">
                             <FolderOpen className="h-3.5 w-3.5" />
-                            <span>{t('fileExplorer.localFiles')}</span>
+                            <span>{t('fileExplorer.documents')}</span>
                         </div>
                     </div>
 
-                    {/* File list */}
+                    {/* Folder tree with documents */}
                     <div className="px-2">
-                        {filteredDocuments.length === 0 ? (
-                            <div className="px-2 py-4 text-center text-xs text-text-muted">
-                                {filter ? t('fileExplorer.noMatchingFiles') : t('sidebar.noFiles')}
-                            </div>
-                        ) : (
-                            filteredDocuments.map((doc) => (
-                                <FileContextMenu key={doc.id} documentId={doc.id}>
-                                    {/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by child elements */}
-                                    <div
-                                        onClick={() => openDocument(doc.id)}
-                                        className={cn(
-                                            'group w-full flex items-center gap-1.5 pl-1 pr-2 py-1.5 rounded-md cursor-pointer',
-                                            'text-sm text-left',
-                                            'hover:bg-bg-tertiary',
-                                            'transition-colors',
-                                            doc.id === activeDocumentId && 'bg-bg-tertiary text-primary-500'
-                                        )}
-                                    >
-                                        {/* Source icon with tooltip */}
-                                        {(() => {
-                                            const { icon: Icon, color, labelKey } = getSourceIcon(doc.source);
-                                            return (
-                                                <Tooltip content={t(labelKey)} side="right">
-                                                    <span className="shrink-0">
-                                                        <Icon className={cn('h-4 w-4', color)} />
-                                                    </span>
-                                                </Tooltip>
-                                            );
-                                        })()}
-
-                                        {/* Document name - double-click to rename */}
-                                        <EditableTabName
-                                            documentId={doc.id}
-                                            name={doc.name}
-                                            isActive={doc.id === activeDocumentId}
-                                            className="flex-1 min-w-0"
-                                        />
-
-                                        {/* Sync status indicator or Close button on hover */}
-                                        <div className="w-4 h-4 shrink-0 flex items-center justify-center relative">
-                                            {/* Status indicator - hidden on hover */}
-                                            {(() => {
-                                                const { bgColor, textColor, labelKey, showDot } = getSyncStatusStyle(doc.syncStatus);
-                                                if (doc.syncStatus === 'syncing') {
-                                                    return (
-                                                        <Tooltip content={t(labelKey)}>
-                                                            <Loader2
-                                                                className="h-3 w-3 animate-spin group-hover:opacity-0 transition-opacity"
-                                                                style={{ color: textColor }}
-                                                            />
-                                                        </Tooltip>
-                                                    );
-                                                }
-                                                if (doc.syncStatus === 'error') {
-                                                    return (
-                                                        <Tooltip content={t(labelKey)}>
-                                                            <AlertCircle
-                                                                className="h-3 w-3 group-hover:opacity-0 transition-opacity"
-                                                                style={{ color: textColor }}
-                                                            />
-                                                        </Tooltip>
-                                                    );
-                                                }
-                                                if (showDot) {
-                                                    return (
-                                                        <Tooltip content={t(labelKey)}>
-                                                            <span
-                                                                className="h-2 w-2 rounded-full group-hover:opacity-0 transition-opacity"
-                                                                style={{ backgroundColor: bgColor }}
-                                                            />
-                                                        </Tooltip>
-                                                    );
-                                                }
-                                                return null;
-                                            })()}
-                                            {/* Close button - visible on hover */}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => handleCloseDocument(e, doc.id)}
-                                                className={cn(
-                                                    'absolute inset-0 flex items-center justify-center rounded-sm',
-                                                    'opacity-0 group-hover:opacity-100',
-                                                    'hover:bg-bg-secondary',
-                                                    'transition-opacity duration-150',
-                                                    'focus:outline-none focus-visible:opacity-100'
-                                                )}
-                                                aria-label={`Close ${doc.name}`}
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </FileContextMenu>
-                            ))
-                        )}
+                        <FolderTree filter={filter} />
                     </div>
                 </div>
             </LocalFilesContextMenu>
+
+            {/* New folder modal */}
+            <NewFolderModal />
         </div>
     );
 }
